@@ -1,0 +1,11 @@
+# In the def-file for the linker, listing the headers of the files from which you need to generate stubs
+
+# list of header files to generate Kotlin stubs
+headers = curl/curl.h
+# show what exactly is included
+headerFilter = curl/*
+
+# You also need to specify linking parameters for different platforms
+compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lcurl
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lcurl
