@@ -1,29 +1,31 @@
 package js
 
 import org.w3c.dom.Window
-// TODO-js-5: обёртка над Window JS API
+
+// wrapper over Window JS API
 external val window: Window
 
 val windowLocation = window.location
 
-// TODO-js-6: вызов JS-кода через функцию js, неудобно для сопровождения
+// calling JS code through a js function, awkward to maintain
 fun useMathRound(value: Double) = js("Math.round(value)")
 
-// TODO-js-7: использование аннотаций для JS модулей
+// using annotations for JS modules
 @JsModule("is-sorted")
 @JsNonModule
 external fun <T> sorted(array: Array<T>): Boolean
 
 
-// TODO-js-8: использование оберток для JS модулей.
-//  Можно сгененить из TS, используя dukat (jsGenerateExternals).
+// Using wrappers for JS modules.
+//  Can be generated from TS using dukat (jsGenerateExternals).
 @JsModule("js-big-decimal")
 @JsNonModule
-@JsName("bigDecimal")
+@JsName("BigDecimal")
 external class JsBigDecimal(value: Any) {
     fun getValue(): String
     fun getPrettyValue(digits: Int, separator: String)
     fun round(precision: Int = definedExternally, mode: dynamic = definedExternally): JsBigDecimal
+
     companion object {
         fun getPrettyValue(number: Any, digits: Int, separator: String)
     }

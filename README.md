@@ -1,7 +1,8 @@
-# Otus Kotlin Marketplace 2022-12
+# 202306-ok-marketplace
 
-Учебный проект курса [Otus](https://otus.ru) [Kotlin Backend Developer](https://otus.ru/lessons/kotlin/).
-Поток курса 2022-12.
+Учебный проект курса
+[Kotlin Backend Developer](https://otus.ru/lessons/kotlin/?int_source=courses_catalog&int_term=programming).
+Поток курса 2023-06.
 
 Marketplace -- это площадка, на которой пользователи выставляют предложения и потребности. Задача
 площадки -- предоставить наиболее подходящие варианты в обоих случаях: для предложения -- набор вариантов с
@@ -23,12 +24,13 @@ Marketplace -- это площадка, на которой пользовате
 
 ## Подпроекты для занятий по языку Kotlin
 
-1. [m1l1-quickstart](m1l1-quickstart) - Быстрый старт, первая программа и тест
-2. [m1l3-oop](m1l3-oop) - Объектно-ориентированное программирование
-3. [m1l4-dsl](m1l4-dsl) - Предметно ориентированные языки (DSL)
-4. [m1l5-coroutines](m1l5-coroutines) - Асинхронное и многопоточное программирование с корутинами
-5. [m1l6-flows-and-channels](m1l6-flows-and-channels) - Асинхронное и многопоточное программирование с Flow и каналами
-6. [m1l7-kmp](m1l7-kmp) - Kotlin Multiplatform и интероперабельность с JVM, JS
+1. [m1l1-quickstart](m1l1-quickstart) - Вводное занятие, создание первой программы на Kotlin
+2. [m1l2-basic](m1l2-basic) - Основные конструкции Kotlin
+3. [m1l3-oop](m1l3-oop) - Объектно-ориентированное программирование
+4. [m1l4-dsl](m1l4-dsl) - Предметно ориентированные языки (DSL)
+5. [m1l5-coroutines](m1l5-coroutines) - Асинхронное и многопоточное программирование с корутинами
+6. [m1l6-flows-and-channels](m1l6-flows-and-channels) - Асинхронное и многопоточное программирование с Flow и каналами
+7. [m1l7-kmp](m1l7-kmp) - Kotlin Multiplatform и интероперабельность с JVM, JS
 
 [//]: # (6. [m2l2-testing]&#40;m2l2-testing&#41; - Тестирование проекта, TDD, MDD)
 

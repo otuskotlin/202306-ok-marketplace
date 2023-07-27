@@ -1,4 +1,4 @@
-// TODO-jvm-2: Преобразование функций в статические методы класса
+// Converting Functions to Static Class Methods
 
 @file:JvmName("Utils")
 @file:JvmMultifileClass

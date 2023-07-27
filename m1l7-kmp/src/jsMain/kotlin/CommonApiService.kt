@@ -1,7 +1,7 @@
 import kotlinx.coroutines.delay
 
 actual class CommonApiService {
-    // TODO-js-4: асинхронный код с корутинами преобразуется в Promise
+    // Asynchronous code with coroutines is converted to Promise
     actual suspend fun makeCall(): String {
         delay(1000)
         return "JS api call"

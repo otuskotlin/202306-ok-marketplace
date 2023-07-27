@@ -1,14 +1,13 @@
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApiServiceTest {
 
-    // TODO-general-7: использование runTest вместо runBlocking для coroutine
-    //  (пропускает вызовы delay на всех платформах)
+    // TODO-general-7: use runTest instead of runBlocking for coroutine
+    //  (skips delay calls on all platforms)
     @Test
-    fun test1() =  runTest {
+    fun test1() = runTest {
         assertEquals("Api call response", ApiService().call())
     }
 }

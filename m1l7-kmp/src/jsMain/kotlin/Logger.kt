@@ -1,6 +1,6 @@
 actual class Logger {
-    // TODO-js-3: использование JS console API из Kotlin через external (native) интерфейс, которые представляет
-    //  объекты, реализация которых будет доступна в целевой платформе
+    // Use the JS console API from Kotlin via the external (native) interface that it represents
+    // objects whose implementation will be available in the target platform
     actual fun log(message: String) {
         console.log("JS log: $message")
     }

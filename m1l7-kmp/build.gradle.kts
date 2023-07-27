@@ -1,4 +1,3 @@
-// TODO-general-1: показать Multiplatform plugin
 plugins {
     kotlin("multiplatform")
 }
@@ -7,23 +6,21 @@ repositories {
     mavenCentral()
 }
 
-// TODO-general-2 (Общие сведения): показать различные target-ы для Multiplatform проекта
 kotlin {
     jvm {
-        compilations.all {
+        /*compilations.all {
             kotlinOptions.jvmTarget = "1.8"
-        }
+        }*/
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
     }
 
-    // TODO-js-1: различных целевых окружений - browser/nodejs
     js(IR) {
         browser {}
     }
-    // TODO-native-1: выявляем окружение, на котором работаем и по результатам определяем целевую платформу
+    // Identify the environment on which we work and, based on the results, determine the target platform
     val hostOs = System.getProperty("os.name")
     val isMingwX64 = hostOs.startsWith("Windows")
     val nativeTarget = when {
@@ -49,9 +46,9 @@ kotlin {
     val coroutinesVersion: String by project
 
 
-    // TODO-general-3: (Общие сведения) Описание модулей, соответствующих нашим целевым платформам
-    //  common - общий код, который мы сможем использовать на разных платформах
-    //  для каждой целевой платформы можем указать свои специфические зависимости
+    // Description of modules corresponding to our target platforms
+    //  common - common code that we can use on different platforms
+    //  for each target platform, we can specify our own specific dependencies
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -71,7 +68,7 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
-        // TODO-js-2: зависимости из npm
+        // dependencies from npm
         val jsMain by getting {
             dependencies {
                 implementation(npm("js-big-decimal", "~1.3.4"))

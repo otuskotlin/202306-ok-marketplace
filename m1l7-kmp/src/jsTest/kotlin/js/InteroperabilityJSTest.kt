@@ -28,10 +28,10 @@ class InteroperabilityJSTest {
 
     @Test
     fun dukatLibraryTest() {
-        val bd = bigDecimal("${PI * 10000}")
+        val bd = BigDecimal("${PI * 10000}")
         println("BigDecimal: ${bd.getValue()}")
         println("Pretty: ${bd.getPrettyValue(3, ",")}")
-        println("Pretty static: ${bigDecimal.getPrettyValue(bd.getValue(), 3, ",")}")
+        println("Pretty static: ${BigDecimal.getPrettyValue(bd.getValue(), 3, ",")}")
         assertEquals("31416", bd.round().getValue())
     }
 }

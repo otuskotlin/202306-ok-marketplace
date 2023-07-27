@@ -1,8 +1,8 @@
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-// TODO-general-4: запуск тестов для различных платформ (./gradlew clean jsTest)
-//  показать где лежат преобразованные под конкретную платформу артефакты
+// Run cross-platform tests (./gradlew clean jsTest)
+//  show where artifacts converted to a specific platform are located
 //  (build/classes/kotlin, build/klib/cache/main)
 class UserTest {
 
