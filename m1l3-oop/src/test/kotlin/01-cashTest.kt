@@ -4,7 +4,8 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class Cash(
+class Cash
+constructor(
     val amount: BigDecimal,
     val currency: Currency
 ) {
