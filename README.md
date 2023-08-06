@@ -25,6 +25,9 @@ Marketplace -- это площадка, на которой пользовате
    2. [Схема мониторинга](./docs/02-devops/02-monitoring.md)
 3. Тесты
 4. Архитектура
+   1. [Компонентная схема](./docs/04-architecture/01-arch.md)
+   2. [Интеграционная схема](./docs/04-architecture/02-integration.md)
+   3. [Описание API](./docs/04-architecture/03-api.md)
 
 # Структура проекта
 
