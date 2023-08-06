@@ -1,11 +1,10 @@
-package fixture.client
+package ru.otus.otuskotlin.marketplace.blackbox.fixture.client
 
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import ru.otus.otuskotlin.marketplace.blackbox.fixture.client.Client
 import ru.otus.otuskotlin.marketplace.blackbox.fixture.docker.DockerCompose
 
 /**

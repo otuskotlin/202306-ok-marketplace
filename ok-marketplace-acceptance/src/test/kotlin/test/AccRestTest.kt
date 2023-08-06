@@ -1,6 +1,6 @@
 package ru.otus.otuskotlin.marketplace.blackbox.test
 
-import fixture.client.RestClient
+import ru.otus.otuskotlin.marketplace.blackbox.fixture.client.RestClient
 import io.kotest.core.annotation.Ignored
 import ru.otus.otuskotlin.marketplace.blackbox.docker.WiremockDockerCompose
 import ru.otus.otuskotlin.marketplace.blackbox.fixture.BaseFunSpec
