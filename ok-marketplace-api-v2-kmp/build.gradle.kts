@@ -25,6 +25,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
             }
         }
+
         @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             dependencies {
@@ -32,6 +33,7 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
+
         @Suppress("UNUSED_VARIABLE")
         val jvmTest by getting {
             dependencies {
