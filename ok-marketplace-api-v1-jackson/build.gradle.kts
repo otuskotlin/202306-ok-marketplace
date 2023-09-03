@@ -3,14 +3,6 @@ plugins {
     id("org.openapi.generator")
 }
 
-dependencies {
-    val jacksonVersion: String by project
-    implementation(kotlin("stdlib"))
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    testImplementation(kotlin("test-junit"))
-}
-
 sourceSets {
     main {
         java.srcDir("$buildDir/generate-resources/main/src/main/kotlin")
@@ -50,6 +42,14 @@ openApiGenerate {
             "collectionType" to "list"
         )
     )
+}
+
+dependencies {
+    val jacksonVersion: String by project
+    implementation(kotlin("stdlib"))
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    testImplementation(kotlin("test-junit"))
 }
 
 tasks {
