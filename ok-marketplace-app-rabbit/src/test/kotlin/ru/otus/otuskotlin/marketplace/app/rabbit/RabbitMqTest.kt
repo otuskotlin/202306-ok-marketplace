@@ -40,7 +40,7 @@ internal class RabbitMqTest {
         const val exchange = "test-exchange"
         const val exchangeType = "direct"
 
-        private val container by lazy {
+        private val container = run {
 //            Этот образ предназначен для дебагинга, он содержит панель управления на порту httpPort
 //            RabbitMQContainer("rabbitmq:3-management").apply {
 //            Этот образ минимальный и не содержит панель управления

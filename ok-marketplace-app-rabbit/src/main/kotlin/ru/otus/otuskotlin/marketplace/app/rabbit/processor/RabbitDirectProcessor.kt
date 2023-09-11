@@ -22,9 +22,8 @@ class RabbitDirectProcessorV1(
     private val processor: MkplAdProcessor = MkplAdProcessor(),
 ) : RabbitProcessorBase(config, processorConfig) {
 
-    private val context = MkplContext()
-
     override suspend fun Channel.processMessage(message: Delivery) {
+        val context = MkplContext()
         context.apply {
             timeStart = Clock.System.now()
         }
@@ -44,6 +43,7 @@ class RabbitDirectProcessorV1(
     }
 
     override fun Channel.onError(e: Throwable) {
+        val context = MkplContext()
         e.printStackTrace()
         context.state = MkplState.FAILING
         context.addError(error = arrayOf(e.asMkplError()))
