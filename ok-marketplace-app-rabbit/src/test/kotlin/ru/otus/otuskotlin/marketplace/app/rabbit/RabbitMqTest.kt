@@ -6,6 +6,8 @@ import com.rabbitmq.client.DeliverCallback
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.testcontainers.containers.RabbitMQContainer
 import ru.otus.otuskotlin.marketplace.api.v1.apiV1Mapper
 import ru.otus.otuskotlin.marketplace.api.v1.models.AdCreateObject
@@ -16,12 +18,11 @@ import ru.otus.otuskotlin.marketplace.api.v1.models.AdRequestDebugMode
 import ru.otus.otuskotlin.marketplace.api.v1.models.AdRequestDebugStubs
 import ru.otus.otuskotlin.marketplace.api.v2.requests.apiV2RequestSerialize
 import ru.otus.otuskotlin.marketplace.api.v2.responses.apiV2ResponseDeserialize
+import ru.otus.otuskotlin.marketplace.app.rabbit.config.AppSettings
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitConfig
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitExchangeConfiguration
-import ru.otus.otuskotlin.marketplace.app.rabbit.controller.RabbitController
-import ru.otus.otuskotlin.marketplace.app.rabbit.processor.RabbitDirectProcessorV1
-import ru.otus.otuskotlin.marketplace.app.rabbit.processor.RabbitDirectProcessorV2
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,71 +39,70 @@ internal class RabbitMqTest {
     companion object {
         const val exchange = "test-exchange"
         const val exchangeType = "direct"
-    }
 
-    val container by lazy {
+        private val container by lazy {
 //            Этот образ предназначен для дебагинга, он содержит панель управления на порту httpPort
 //            RabbitMQContainer("rabbitmq:3-management").apply {
 //            Этот образ минимальный и не содержит панель управления
-        RabbitMQContainer("rabbitmq:latest").apply {
-            withExposedPorts(5672, 15672)
-            withUser("guest", "guest")
-            start()
+            RabbitMQContainer("rabbitmq:latest").apply {
+                withExposedPorts(5672, 15672)
+                withUser("guest", "guest")
+            }
+        }
+
+        @BeforeClass
+        @JvmStatic
+        fun beforeAll() {
+            container.start()
+        }
+        @AfterClass
+        @JvmStatic
+        fun afterAll() {
+            container.stop()
         }
     }
 
-    val rabbitMqTestPort: Int by lazy {
-        container.getMappedPort(5672)
-    }
-    val config by lazy {
-        RabbitConfig(
-            port = rabbitMqTestPort
-        )
-    }
-    val processorV1 by lazy {
-        RabbitDirectProcessorV1(
-            config = config,
-            processorConfig = RabbitExchangeConfiguration(
+    private val appSettings by lazy {
+        AppSettings(
+            config = RabbitConfig(
+                port = container.getMappedPort(5672)
+            ),
+            producerConfigV1 = RabbitExchangeConfiguration(
                 keyIn = "in-v1",
                 keyOut = "out-v1",
                 exchange = exchange,
                 queue = "v1-queue",
                 consumerTag = "test-tag",
                 exchangeType = exchangeType
-            )
-        )
-    }
-    val processorV2 by lazy {
-        RabbitDirectProcessorV2(
-            config = config,
-            processorConfig = RabbitExchangeConfiguration(
+            ),
+            producerConfigV2 = RabbitExchangeConfiguration(
                 keyIn = "in-v2",
                 keyOut = "out-v2",
                 exchange = exchange,
                 queue = "v2-queue",
                 consumerTag = "v2-consumer",
                 exchangeType = exchangeType
-            )
-        )
-    }
-    val controller by lazy {
-        RabbitController(
-            processors = setOf(processorV1, processorV2)
+            ),
         )
     }
 
     @BeforeTest
     fun tearUp() {
-        controller.start()
+        appSettings.controller.start()
+    }
+
+    @AfterTest
+    fun tearDown() {
+        appSettings.controller.close()
     }
 
     @Test
     fun adCreateTestV1() {
-        val keyOut = processorV1.processorConfig.keyOut
-        val keyIn = processorV1.processorConfig.keyIn
+        val (keyOut, keyIn) = with(appSettings.processor1.processorConfig) { Pair(keyOut, keyIn) }
+        val (tstHost, tstPort) = with(appSettings.config) { Pair(host, port) }
         ConnectionFactory().apply {
-            host = config.host
-            port = config.port
+            host = tstHost
+            port = tstPort
             username = "guest"
             password = "guest"
         }.newConnection().use { connection ->
@@ -139,11 +139,11 @@ internal class RabbitMqTest {
 
     @Test
     fun adCreateTestV2() {
-        val keyOut = processorV2.processorConfig.keyOut
-        val keyIn = processorV2.processorConfig.keyIn
+        val (keyOut, keyIn) = with(appSettings.processor2.processorConfig) { Pair(keyOut, keyIn) }
+        val (tstHost, tstPort) = with(appSettings.config) { Pair(host, port) }
         ConnectionFactory().apply {
-            host = config.host
-            port = config.port
+            host = tstHost
+            port = tstPort
             username = "guest"
             password = "guest"
         }.newConnection().use { connection ->

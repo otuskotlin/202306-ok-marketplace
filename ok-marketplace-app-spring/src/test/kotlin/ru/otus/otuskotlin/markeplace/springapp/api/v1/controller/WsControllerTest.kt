@@ -1,6 +1,7 @@
 package ru.otus.otuskotlin.markeplace.springapp.api.v1.controller
 
 import io.kotest.common.runBlocking
+import jakarta.websocket.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -14,7 +15,6 @@ import ru.otus.otuskotlin.marketplace.api.v1.models.AdInitResponse
 import ru.otus.otuskotlin.marketplace.api.v1.models.IResponse
 import ru.otus.otuskotlin.marketplace.api.v1.models.ResponseResult
 import java.net.URI
-import javax.websocket.*
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -55,6 +55,7 @@ class WsControllerTest {
     }
 }
 
+@Suppress("unused")
 @ClientEndpoint
 class TestWebSocketClient {
     var session: Session? = null
@@ -66,7 +67,7 @@ class TestWebSocketClient {
     }
 
     @OnClose
-    fun onClose(session: Session?, reason: CloseReason) {
+    fun onClose(@Suppress("UNUSED_PARAMETER") session: Session?, reason: CloseReason) {
         println("Session is closed due to ${reason.reasonPhrase}")
         this.session = null
     }

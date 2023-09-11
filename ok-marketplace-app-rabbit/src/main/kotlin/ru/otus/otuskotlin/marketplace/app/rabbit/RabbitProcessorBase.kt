@@ -2,13 +2,11 @@ package ru.otus.otuskotlin.marketplace.app.rabbit
 
 import com.rabbitmq.client.CancelCallback
 import com.rabbitmq.client.Channel
+import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitConfig
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitExchangeConfiguration
 import kotlin.coroutines.CoroutineContext
@@ -19,25 +17,28 @@ import kotlin.coroutines.CoroutineContext
  * @property config - настройки подключения
  * @property processorConfig - настройки Rabbit exchange
  */
-abstract class RabbitProcessorBase(
+abstract class RabbitProcessorBase @OptIn(ExperimentalCoroutinesApi::class) constructor(
     private val config: RabbitConfig,
-    val processorConfig: RabbitExchangeConfiguration
+    val processorConfig: RabbitExchangeConfiguration,
+    private val dispatcher: CoroutineContext = Dispatchers.IO.limitedParallelism(1) + Job(),
 ) {
-    suspend fun process(dispatcher: CoroutineContext = Dispatchers.IO) {
-        withContext(dispatcher) {
-            ConnectionFactory().apply {
-                host = config.host
-                port = config.port
-                username = config.user
-                password = config.password
-            }.newConnection().use { connection ->
-                connection.createChannel().use { channel ->
-                    val deliveryCallback = channel.getDeliveryCallback()
-                    val cancelCallback = getCancelCallback()
-                    runBlocking {
-                        channel.describeAndListen(deliveryCallback, cancelCallback)
-                    }
-                }
+    var conn: Connection? = null
+    var chan: Channel? = null
+    suspend fun process() = withContext(dispatcher) {
+        ConnectionFactory().apply {
+            host = config.host
+            port = config.port
+            username = config.user
+            password = config.password
+        }.newConnection().use { connection ->
+            println("Creating new connection")
+            conn = connection
+            connection.createChannel().use { channel ->
+                println("Creating new channel")
+                chan = channel
+                val deliveryCallback = channel.getDeliveryCallback()
+                val cancelCallback = getCancelCallback()
+                channel.describeAndListen(deliveryCallback, cancelCallback)
             }
         }
     }
@@ -96,7 +97,17 @@ abstract class RabbitProcessorBase(
 
             println("Channel for [${processorConfig.consumerTag}] was closed.")
         }
+    }
 
-
+    fun close() {
+        chan?.takeIf { it.isOpen }?.run {
+            basicCancel(processorConfig.consumerTag)
+            close()
+            println("Close channel")
+        }
+        conn?.takeIf { it.isOpen }?.run {
+            close()
+            println("Close Rabbit connection")
+        }
     }
 }

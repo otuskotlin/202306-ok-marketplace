@@ -27,7 +27,7 @@ dependencies {
     implementation(project(":ok-marketplace-mappers-v2"))
     implementation(project(":ok-marketplace-api-v2-kmp"))
 
-    // Stubs
+    implementation(project(":ok-marketplace-biz"))
     implementation(project(":ok-marketplace-stubs"))
 
     testImplementation("org.testcontainers:rabbitmq:$testContainersVersion")

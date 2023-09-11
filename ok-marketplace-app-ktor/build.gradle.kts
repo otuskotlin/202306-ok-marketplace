@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_VARIABLE")
-
 import org.jetbrains.kotlin.util.suffixIfNot
 
 val ktorVersion: String by project
@@ -14,28 +12,29 @@ plugins {
     id("application")
     kotlin("plugin.serialization")
     kotlin("multiplatform")
-    id("io.ktor.plugin")
+//    id("io.ktor.plugin")
 }
 
 repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+    gradlePluginPortal()
 }
 
 application {
     mainClass.set("io.ktor.server.cio.EngineMain")
 }
 
-ktor {
-    docker {
-        localImageName.set(project.name + "-ktor")
-        imageTag.set(project.version.toString())
-        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
-    }
-}
-
-jib {
-    container.mainClass = "io.ktor.server.cio.EngineMain"
-}
+//ktor {
+//    docker {
+//        localImageName.set(project.name + "-ktor")
+//        imageTag.set(project.version.toString())
+//        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
+//    }
+//}
+//
+//jib {
+//    container.mainClass = "io.ktor.server.cio.EngineMain"
+//}
 
 kotlin {
     jvm {

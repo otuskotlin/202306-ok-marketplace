@@ -29,4 +29,8 @@ class RabbitController(
             }
         }
     }
+
+    fun close() {
+        processors.forEach { it.close() }
+    }
 }

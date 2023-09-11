@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.marketplace.v1
+package ru.otus.otuskotlin.marketplace.app.v1
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.websocket.*
@@ -12,7 +12,9 @@ import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.common.helpers.addError
 import ru.otus.otuskotlin.marketplace.common.helpers.asMkplError
 import ru.otus.otuskotlin.marketplace.common.helpers.isUpdatableCommand
-import ru.otus.otuskotlin.marketplace.mappers.v1.*
+import ru.otus.otuskotlin.marketplace.mappers.v1.fromTransport
+import ru.otus.otuskotlin.marketplace.mappers.v1.toTransportAd
+import ru.otus.otuskotlin.marketplace.mappers.v1.toTransportInit
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
 
 val sessions = mutableSetOf<WebSocketSession>()

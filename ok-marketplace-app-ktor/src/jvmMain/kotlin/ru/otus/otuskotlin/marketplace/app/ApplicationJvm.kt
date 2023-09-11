@@ -11,23 +11,18 @@ import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.plugins.defaultheaders.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import org.slf4j.event.Level
 import ru.otus.otuskotlin.marketplace.api.v1.apiV1Mapper
 import ru.otus.otuskotlin.marketplace.app.v1.v1Ad
 import ru.otus.otuskotlin.marketplace.app.v1.v1Offer
+import ru.otus.otuskotlin.marketplace.app.v1.wsHandlerV1
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
-import ru.otus.otuskotlin.marketplace.app.module as commonModule
-
-// function with config (application.conf)
-fun main(args: Array<String>): Unit = io.ktor.server.cio.EngineMain.main(args)
 
 @Suppress("unused") // Referenced in application.conf
 fun Application.moduleJvm() {
     val processor = MkplAdProcessor()
-    commonModule(processor)
 
     install(CachingHeaders)
     install(DefaultHeaders)
@@ -52,10 +47,6 @@ fun Application.moduleJvm() {
     install(Locations)
 
     routing {
-        get("/") {
-            call.respondText("Hello, world!")
-        }
-
         route("v1") {
             install(ContentNegotiation) {
                 jackson {
@@ -66,6 +57,10 @@ fun Application.moduleJvm() {
 
             v1Ad(processor)
             v1Offer(processor)
+        }
+
+        webSocket("/ws/v1") {
+            wsHandlerV1()
         }
 
         static("static") {
