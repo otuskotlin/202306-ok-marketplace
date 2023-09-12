@@ -6,6 +6,10 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 dependencies {
     val kotestVersion: String by project
     val springdocOpenapiUiVersion: String by project
