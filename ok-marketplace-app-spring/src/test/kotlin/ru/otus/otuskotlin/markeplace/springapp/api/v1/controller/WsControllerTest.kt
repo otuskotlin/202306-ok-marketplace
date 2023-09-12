@@ -55,7 +55,6 @@ class WsControllerTest {
     }
 }
 
-@Suppress("unused")
 @ClientEndpoint
 class TestWebSocketClient {
     var session: Session? = null
@@ -67,14 +66,12 @@ class TestWebSocketClient {
     }
 
     @OnClose
-    fun onClose(@Suppress("UNUSED_PARAMETER") session: Session?, reason: CloseReason) {
-        println("Session is closed due to ${reason.reasonPhrase}")
+    fun onClose(session: Session?, reason: CloseReason) {
         this.session = null
     }
 
     @OnMessage
     fun onMessage(message: String) {
-        println("Received text message: $message")
         messages.add(message)
     }
 
