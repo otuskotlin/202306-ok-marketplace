@@ -27,13 +27,16 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+        uses: gradle/wrapper-validation-action@v1
 
       - name: Install curl-dev
         run: sudo apt install -y libcurl4-openssl-dev
 
-      - name: Test package
-        run: gradle check
+      - name: Run Tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.6.2
+          arguments: check -i
 
 #      - name: Report unit tests
 #        uses: dorny/test-reporter@v1
