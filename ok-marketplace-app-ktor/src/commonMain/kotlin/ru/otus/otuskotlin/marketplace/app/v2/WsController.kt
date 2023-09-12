@@ -7,14 +7,12 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.decodeFromString
 import ru.otus.otuskotlin.marketplace.api.v2.apiV2Mapper
-import ru.otus.otuskotlin.marketplace.api.v2.apiV2ResponseSerialize
+import ru.otus.otuskotlin.marketplace.api.v2.encodeResponse
 import ru.otus.otuskotlin.marketplace.api.v2.models.IRequest
-import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.common.helpers.addError
 import ru.otus.otuskotlin.marketplace.common.helpers.asMkplError
 import ru.otus.otuskotlin.marketplace.common.helpers.isUpdatableCommand
-import ru.otus.otuskotlin.marketplace.common.models.MkplWorkMode
 import ru.otus.otuskotlin.marketplace.mappers.v2.fromTransport
 import ru.otus.otuskotlin.marketplace.mappers.v2.toTransportAd
 import ru.otus.otuskotlin.marketplace.mappers.v2.toTransportInit
@@ -22,15 +20,12 @@ import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
 
 val sessions = mutableSetOf<WebSocketSession>()
 
-suspend fun WebSocketSession.wsHandlerV2(processor: MkplAdProcessor) {
+suspend fun WebSocketSession.wsHandlerV2() {
     sessions.add(this)
 
     // Handle init request
     val ctx = MkplContext()
-    ctx.workMode = MkplWorkMode.STUB
-    processor.exec(ctx)
-
-    val init = apiV2ResponseSerialize(ctx.toTransportInit())
+    val init = apiV2Mapper.encodeResponse(ctx.toTransportInit())
     outgoing.send(Frame.Text(init))
 
     // Handle flow
@@ -44,9 +39,9 @@ suspend fun WebSocketSession.wsHandlerV2(processor: MkplAdProcessor) {
         try {
             val request = apiV2Mapper.decodeFromString<IRequest>(jsonStr)
             context.fromTransport(request)
-            processor.exec(context)
+            context.adResponse = MkplAdStub.get()
 
-            val result = apiV2ResponseSerialize(context.toTransportAd())
+            val result = apiV2Mapper.encodeResponse(context.toTransportAd())
 
             // If change request, response is sent to everyone
             if (context.isUpdatableCommand()) {
@@ -61,7 +56,7 @@ suspend fun WebSocketSession.wsHandlerV2(processor: MkplAdProcessor) {
         } catch (t: Throwable) {
             context.addError(t.asMkplError())
 
-            val result = apiV2ResponseSerialize(context.toTransportInit())
+            val result = apiV2Mapper.encodeResponse(context.toTransportInit())
             outgoing.send(Frame.Text(result))
         }
     }.collect()

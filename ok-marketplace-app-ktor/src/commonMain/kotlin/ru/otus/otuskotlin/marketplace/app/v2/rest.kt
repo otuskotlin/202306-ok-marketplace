@@ -4,7 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 
-fun Route.v2Ad(processor: MkplAdProcessor) {
+fun Route.v2Ad(processor: MkplAdProcessor = MkplAdProcessor()) {
     route("ad") {
         post("create") {
             call.createAd(processor)
@@ -24,7 +24,7 @@ fun Route.v2Ad(processor: MkplAdProcessor) {
     }
 }
 
-fun Route.v2Offer(processor: MkplAdProcessor) {
+fun Route.v2Offer(processor: MkplAdProcessor = MkplAdProcessor()) {
     route("ad") {
         post("offers") {
             call.offersAd(processor)

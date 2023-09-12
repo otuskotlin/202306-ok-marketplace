@@ -14,11 +14,8 @@ import ru.otus.otuskotlin.marketplace.app.v2.v2Offer
 import ru.otus.otuskotlin.marketplace.app.v2.wsHandlerV2
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 
-fun Application.module(processor: MkplAdProcessor = MkplAdProcessor(), installPlugins: Boolean = true) {
-    if (installPlugins) {
-        install(WebSockets)
-    }
-
+fun Application.module(processor: MkplAdProcessor = MkplAdProcessor()) {
+    install(WebSockets)
     routing {
         get("/") {
             call.respondText("Hello, world!")
@@ -30,14 +27,16 @@ fun Application.module(processor: MkplAdProcessor = MkplAdProcessor(), installPl
 
             v2Ad(processor)
             v2Offer(processor)
-        }
 
+        }
         webSocket("/ws/v2") {
-            wsHandlerV2(processor)
+            wsHandlerV2()
         }
     }
 }
 
 fun main() {
-    embeddedServer(CIO, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(CIO, port = 8080) {
+        module()
+    }.start(wait = true)
 }
