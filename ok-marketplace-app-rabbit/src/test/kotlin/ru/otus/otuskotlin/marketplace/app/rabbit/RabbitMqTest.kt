@@ -18,7 +18,8 @@ import ru.otus.otuskotlin.marketplace.api.v1.models.AdRequestDebugMode
 import ru.otus.otuskotlin.marketplace.api.v1.models.AdRequestDebugStubs
 import ru.otus.otuskotlin.marketplace.api.v2.requests.apiV2RequestSerialize
 import ru.otus.otuskotlin.marketplace.api.v2.responses.apiV2ResponseDeserialize
-import ru.otus.otuskotlin.marketplace.app.rabbit.config.AppSettings
+import ru.otus.otuskotlin.marketplace.app.rabbit.config.MkplAppSettings
+import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitApp
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitConfig
 import ru.otus.otuskotlin.marketplace.app.rabbit.config.RabbitExchangeConfiguration
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
@@ -62,11 +63,14 @@ internal class RabbitMqTest {
         }
     }
 
-    private val appSettings by lazy {
-        AppSettings(
-            config = RabbitConfig(
-                port = container.getMappedPort(5672)
-            ),
+    private val appSettings = MkplAppSettings(
+        config = RabbitConfig(
+            port = container.getMappedPort(5672)
+        ),
+    )
+    private val app by lazy {
+        RabbitApp(
+            appSettings = appSettings,
             producerConfigV1 = RabbitExchangeConfiguration(
                 keyIn = "in-v1",
                 keyOut = "out-v1",
@@ -88,17 +92,17 @@ internal class RabbitMqTest {
 
     @BeforeTest
     fun tearUp() {
-        appSettings.controller.start()
+        app.controller.start()
     }
 
     @AfterTest
     fun tearDown() {
-        appSettings.controller.close()
+        app.controller.close()
     }
 
     @Test
     fun adCreateTestV1() {
-        val (keyOut, keyIn) = with(appSettings.processor1.processorConfig) { Pair(keyOut, keyIn) }
+        val (keyOut, keyIn) = with(app.processor1.processorConfig) { Pair(keyOut, keyIn) }
         val (tstHost, tstPort) = with(appSettings.config) { Pair(host, port) }
         ConnectionFactory().apply {
             host = tstHost
@@ -139,7 +143,7 @@ internal class RabbitMqTest {
 
     @Test
     fun adCreateTestV2() {
-        val (keyOut, keyIn) = with(appSettings.processor2.processorConfig) { Pair(keyOut, keyIn) }
+        val (keyOut, keyIn) = with(app.processor2.processorConfig) { Pair(keyOut, keyIn) }
         val (tstHost, tstPort) = with(appSettings.config) { Pair(host, port) }
         ConnectionFactory().apply {
             host = tstHost

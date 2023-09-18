@@ -7,21 +7,24 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
+import ru.otus.otuskotlin.markeplace.springapp.config.CorConfig
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.mappers.v1.*
 
-@WebFluxTest(AdController::class, OfferController::class)
+@WebFluxTest(AdControllerV1::class, OfferControllerV1::class)
+@Import(CorConfig::class)
 internal class AdControllerTest {
     @Autowired
     private lateinit var webClient: WebTestClient
 
     @MockkBean(relaxUnitFun = true)
-    private lateinit var processor: MkplAdProcessor
+    lateinit var processor: MkplAdProcessor
 
     @Autowired
     private lateinit var mapper: ObjectMapper
