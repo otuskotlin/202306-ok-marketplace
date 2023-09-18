@@ -51,14 +51,15 @@ val apiV2Mapper = Json {
     }
 }
 
-fun Json.encodeResponse(response: IResponse): String = encodeToString(AdResponseSerializer, response)
+//fun Json.encodeResponse(response: IResponse): String = encodeToString(AdResponseSerializer, response)
 
 fun apiV2ResponseSerialize(Response: IResponse): String = apiV2Mapper.encodeToString(AdResponseSerializer, Response)
 
-@Suppress("UNCHECKED_CAST")
-fun <T : Any> apiV2ResponseDeserialize(json: String): T = apiV2Mapper.decodeFromString(AdResponseSerializer, json) as T
+@Suppress("UNCHECKED_CAST", "unused")
+fun <T : IResponse> apiV2ResponseDeserialize(json: String): T = apiV2Mapper.decodeFromString(AdResponseSerializer, json) as T
 
+@Suppress("unused")
 fun apiV2RequestSerialize(request: IRequest): String = apiV2Mapper.encodeToString(AdRequestSerializer, request)
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> apiV2RequestDeserialize(json: String): T = apiV2Mapper.decodeFromString(AdRequestSerializer, json) as T
+fun <T : IRequest> apiV2RequestDeserialize(json: String): T = apiV2Mapper.decodeFromString(AdRequestSerializer, json) as T
