@@ -12,12 +12,8 @@ kotlin {
 
     sourceSets {
         val serializationVersion: String by project
-
-        @Suppress("UNUSED_VARIABLE")
         val commonMain by getting {
-
             kotlin.srcDirs("$buildDir/generate-resources/main/src/commonMain/kotlin")
-
             dependencies {
                 implementation(kotlin("stdlib-common"))
 
@@ -25,16 +21,12 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
             }
         }
-
-        @Suppress("UNUSED_VARIABLE")
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
         }
-
-        @Suppress("UNUSED_VARIABLE")
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

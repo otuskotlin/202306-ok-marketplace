@@ -9,12 +9,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import ru.otus.otuskotlin.marketplace.api.v2.apiV2Mapper
+import ru.otus.otuskotlin.marketplace.app.plugins.initAppSettings
+import ru.otus.otuskotlin.marketplace.app.v2.wsHandlerV2
 import ru.otus.otuskotlin.marketplace.app.v2.v2Ad
 import ru.otus.otuskotlin.marketplace.app.v2.v2Offer
-import ru.otus.otuskotlin.marketplace.app.v2.wsHandlerV2
-import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 
-fun Application.module(processor: MkplAdProcessor = MkplAdProcessor()) {
+fun Application.module(appSettings: MkplAppSettings = initAppSettings()) {
     install(WebSockets)
     routing {
         get("/") {
@@ -25,12 +25,12 @@ fun Application.module(processor: MkplAdProcessor = MkplAdProcessor()) {
                 json(apiV2Mapper)
             }
 
-            v2Ad(processor)
-            v2Offer(processor)
+            v2Ad(appSettings)
+            v2Offer(appSettings)
 
         }
         webSocket("/ws/v2") {
-            wsHandlerV2()
+            wsHandlerV2(appSettings)
         }
     }
 }

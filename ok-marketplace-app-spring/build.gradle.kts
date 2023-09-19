@@ -29,8 +29,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
 
-    // transport models
     implementation(project(":ok-marketplace-common"))
+    implementation(project(":ok-marketplace-app-common"))
 
     // v1 api
     implementation(project(":ok-marketplace-api-v1-jackson"))
@@ -52,6 +52,7 @@ dependencies {
 }
 
 tasks {
+    @Suppress("UnstableApiUsage")
     withType<ProcessResources> {
         from("$rootDir/specs") {
             into("/static")
