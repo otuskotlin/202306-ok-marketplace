@@ -41,53 +41,40 @@ Marketplace -- это площадка, на которой пользовате
 6. [m1l6-flows-and-channels](m1l6-flows-and-channels) - Асинхронное и многопоточное программирование с Flow и каналами
 7. [m1l7-kmp](m1l7-kmp) - Kotlin Multiplatform и интероперабельность с JVM, JS
 
-[//]: # (6. [m2l2-testing]&#40;m2l2-testing&#41; - Тестирование проекта, TDD, MDD)
+## Транспортные модели, API
 
-[//]: # ()
+1. [specs](specs) - описание API в форме OpenAPI-спецификаций
+2. [ok-marketplace-api-v1-jackson](ok-marketplace-api-v1-jackson) - Генерация первой версии транспортных модеелй с
+   Jackson
+3. [ok-marketplace-api-v2-kmp](ok-marketplace-api-v2-kmp) - Генерация второй версии транспортных моделей с KMP
+4. [ok-marketplace-api-log1](ok-marketplace-api-log1) - Генерация первой версии моделей логирования
+5. [ok-marketplace-common](ok-marketplace-common) - модуль с общими классами для модулей проекта. В частности, там
+   располагаются внутренние модели и контекст.
+6. [ok-marketplace-mappers-v1](ok-marketplace-mappers-v1) - Мапер между внутренними моделями и моделями API v1
+7. [ok-marketplace-mappers-v2](ok-marketplace-mappers-v2) - Мапер между внутренними моделями и моделями API v2
+8. [ok-marketplace-mappers-log1](ok-marketplace-mappers-log1) - Мапер между внутренними моделями и моделями логирования
+   первой версии
 
-[//]: # (## Транспортные модели, API)
+## Фреймворки и транспорты
 
-[//]: # ()
+1. [ok-marketplace-app-spring](ok-marketplace-app-spring) - Приложение на Spring Framework
+2. [ok-marketplace-app-ktor](ok-marketplace-app-ktor) - Приложение на Ktor JVM/Native
+3. [ok-marketplace-app-serverless](ok-marketplace-app-serverless) - Приложение для Yandex.Cloud lambda
+4. [ok-marketplace-app-rabbit](ok-marketplace-app-rabbit) - Микросервис на RabbitMQ
+5. [ok-marketplace-app-kafka](ok-marketplace-app-kafka) - Микросервис на Kafka
 
-[//]: # (1. [specs]&#40;specs&#41; - описание API в форме OpenAPI-спецификаций)
+## Мониторинг и логирование
 
-[//]: # (2. [ok-marketplace-api-v1-jackson]&#40;ok-marketplace-api-v1-jackson&#41; - Генерация первой версии транспортных модеелй с)
+1. [deploy](deploy) - Инструменты мониторинга и деплоя
+2. [ok-marketplace-lib-logging-common](ok-marketplace-lib-logging-common) - Общие объявления для логирования
+3. [ok-marketplace-lib-logging-kermit](ok-marketplace-lib-logging-kermit) - Библиотека логирования на базе библиотеки
+   Kermit
+4. [ok-marketplace-lib-logging-logback](ok-marketplace-lib-logging-logback) - Библиотека логирования на базе библиотеки
+   Logback
 
-[//]: # (   Jackson)
+## Модули бизнес-логики
 
-[//]: # (3. [ok-marketplace-api-v2-kmp]&#40;ok-marketplace-api-v2-kmp&#41; - Генерация второй версии транспортных модеелй с KMP)
-
-[//]: # (4. [ok-marketplace-common]&#40;ok-marketplace-common&#41; - модуль с общими классами для модулей проекта. В частности, там)
-
-[//]: # (   располагаются внутренние модели и контекст.)
-
-[//]: # (5. [ok-marketplace-mappers-v1]&#40;ok-marketplace-mappers-v1&#41; - Мапер между внутренними моделями и моделями API v1)
-
-[//]: # (6. [ok-marketplace-mappers-v2]&#40;ok-marketplace-mappers-v2&#41; - Мапер между внутренними моделями и моделями API v1)
-
-[//]: # ()
-
-[//]: # (## Фреймворки и транспорты)
-
-[//]: # ()
-
-[//]: # (1. [ok-marketplace-app-spring]&#40;ok-marketplace-app-spring&#41; - Приложение на Spring Framework)
-
-[//]: # (1. [ok-marketplace-app-ktor]&#40;ok-marketplace-app-ktor&#41; - Приложение на Ktor JVM/Native)
-
-[//]: # (1. [ok-marketplace-app-knative]&#40;ok-marketplace-app-serverless&#41; - Приложение для Yandex.Cloud lambda)
-
-[//]: # (1. [ok-marketplace-app-rabbit]&#40;ok-marketplace-app-rabbit&#41; - Микросервис на RabbitMQ)
-
-[//]: # (1. [ok-marketplace-app-kafka]&#40;ok-marketplace-app-kafka&#41; - Микросервис на Kafka)
-
-[//]: # ()
-
-[//]: # (## Модули бизнес-логики)
-
-[//]: # ()
-
-[//]: # (1. [ok-marketplace-stubs]&#40;ok-marketplace-stubs&#41; - Стабы для ответов сервиса)
+1. [ok-marketplace-stubs](ok-marketplace-stubs) - Стабы для ответов сервиса
 
 [//]: # (1. [ok-marketplace-biz]&#40;ok-marketplace-biz&#41; - Модуль бизнес-логики приложения)
 

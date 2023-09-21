@@ -10,6 +10,7 @@ pluginManagement {
     val pluginJpa: String by settings
     val ktorVersion: String by settings
     val pluginShadow: String by settings
+    val bmuschkoVersion: String by settings
 
     plugins {
         kotlin("jvm") version kotlinVersion
@@ -26,6 +27,9 @@ pluginManagement {
         id("io.kotest.multiplatform") version kotestVersion apply false
         id("org.openapi.generator") version openapiVersion apply false
         id("com.github.johnrengelman.shadow") version pluginShadow apply false
+
+        id("com.bmuschko.docker-java-application") version bmuschkoVersion apply false
+        id("com.bmuschko.docker-remote-api") version bmuschkoVersion apply false
     }
 }
 

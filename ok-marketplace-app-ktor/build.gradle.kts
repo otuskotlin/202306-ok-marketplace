@@ -15,9 +15,10 @@ plugins {
 //    id("io.ktor.plugin")
 }
 
-repositories {
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
-    gradlePluginPortal()
+val webjars: Configuration by configurations.creating
+dependencies {
+    val swaggerUiVersion: String by project
+    webjars("org.webjars:swagger-ui:$swaggerUiVersion")
 }
 
 application {
@@ -40,12 +41,12 @@ kotlin {
     jvm {
         withJava()
     }
-    linuxX64 {}
-    macosX64 {}
-    macosArm64 {}
-
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        binaries {
+    listOf(
+        linuxX64 {},
+        macosX64 {},
+        macosArm64 {},
+    ).forEach {
+        it.binaries {
             executable {
                 entryPoint = "ru.otus.otuskotlin.marketplace.app.main"
             }
@@ -130,6 +131,7 @@ kotlin {
                 implementation(ktor("auth-jwt")) // "io.ktor:ktor-auth-jwt:$ktorVersion"
 
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
+                implementation(project(":ok-marketplace-lib-logging-logback"))
 
                 // transport models
                 implementation(project(":ok-marketplace-api-v1-jackson"))
@@ -143,7 +145,22 @@ kotlin {
                 implementation(ktor("test-host")) // "io.ktor:ktor-server-test-host:$ktorVersion"
                 implementation(ktor("content-negotiation", prefix = "client-"))
                 implementation(ktor("websockets", prefix = "client-"))
+
+                implementation("com.sndyuk:logback-more-appenders:1.8.8")
+                implementation("org.fluentd:fluent-logger:0.3.4")
             }
+        }
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        val linuxX64Main by getting {
+            dependsOn(nativeMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(nativeMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(nativeMain)
         }
     }
 }
