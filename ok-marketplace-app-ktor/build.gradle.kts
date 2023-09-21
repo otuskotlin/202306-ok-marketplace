@@ -84,6 +84,12 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+
+                // logging
+                implementation(project(":ok-marketplace-api-log1"))
+                implementation(project(":ok-marketplace-mappers-log1"))
+                implementation(project(":ok-marketplace-lib-logging-common"))
+                implementation(project(":ok-marketplace-lib-logging-kermit"))
             }
         }
 
