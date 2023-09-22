@@ -24,6 +24,7 @@ class CorConfig {
 
     @Bean
     fun appSettings() = MkplAppSettings(
+        corSettings = corSettings(),
         processor = processor()
     )
 
