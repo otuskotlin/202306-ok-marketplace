@@ -1,4 +1,8 @@
-package ru.otus.otuskotlin.marketplace.app
+package ru.otus.otuskotlin.marketplace.app.stubs
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Native не поддерживает тестирование websocket. Поэтому переносим этот файлв jvmTest
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 import io.ktor.server.testing.*
 import ru.otus.otuskotlin.marketplace.api.v2.models.*

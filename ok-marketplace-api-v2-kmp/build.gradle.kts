@@ -1,14 +1,13 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
 
 plugins {
-    java
-    id("org.openapi.generator")
     kotlin("multiplatform")
+    id("org.openapi.generator")
     kotlin("plugin.serialization")
 }
 
 kotlin {
-    jvm { withJava() }
+    jvm { }
     linuxX64 { }
     macosX64 { }
     macosArm64 { }

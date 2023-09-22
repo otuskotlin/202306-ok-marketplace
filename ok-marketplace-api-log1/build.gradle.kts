@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    jvm { withJava() }
+    jvm { }
     linuxX64 { }
     macosX64 { }
     macosArm64 { }
