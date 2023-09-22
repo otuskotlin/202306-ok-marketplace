@@ -1,6 +1,5 @@
 package ru.otus.otuskotlin.marketplace.cor
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.otuskotlin.marketplace.cor.handlers.CorChain
 import ru.otus.otuskotlin.marketplace.cor.handlers.CorWorker
@@ -10,7 +9,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class CorBaseTest {
     @Test
     @JsName("worker_should_execute_handle")
