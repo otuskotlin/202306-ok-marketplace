@@ -15,9 +15,10 @@ plugins {
 //    id("io.ktor.plugin")
 }
 
-repositories {
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
-    gradlePluginPortal()
+val webjars: Configuration by configurations.creating
+dependencies {
+    val swaggerUiVersion: String by project
+    webjars("org.webjars:swagger-ui:$swaggerUiVersion")
 }
 
 application {
@@ -40,12 +41,12 @@ kotlin {
     jvm {
         withJava()
     }
-    linuxX64 {}
-    macosX64 {}
-    macosArm64 {}
-
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        binaries {
+    listOf(
+        linuxX64 {},
+        macosX64 {},
+        macosArm64 {},
+    ).forEach {
+        it.binaries {
             executable {
                 entryPoint = "ru.otus.otuskotlin.marketplace.app.main"
             }
@@ -84,6 +85,12 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+
+                // logging
+                implementation(project(":ok-marketplace-api-log1"))
+                implementation(project(":ok-marketplace-mappers-log1"))
+                implementation(project(":ok-marketplace-lib-logging-common"))
+                implementation(project(":ok-marketplace-lib-logging-kermit"))
             }
         }
 
@@ -124,6 +131,9 @@ kotlin {
                 implementation(ktor("auth-jwt")) // "io.ktor:ktor-auth-jwt:$ktorVersion"
 
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
+                implementation(project(":ok-marketplace-lib-logging-logback"))
+                implementation("com.sndyuk:logback-more-appenders:1.8.8")
+                implementation("org.fluentd:fluent-logger:0.3.4")
 
                 // transport models
                 implementation(project(":ok-marketplace-api-v1-jackson"))
@@ -138,6 +148,18 @@ kotlin {
                 implementation(ktor("content-negotiation", prefix = "client-"))
                 implementation(ktor("websockets", prefix = "client-"))
             }
+        }
+        val nativeMain by creating {
+            dependsOn(commonMain)
+        }
+        val linuxX64Main by getting {
+            dependsOn(nativeMain)
+        }
+        val macosX64Main by getting {
+            dependsOn(nativeMain)
+        }
+        val macosArm64Main by getting {
+            dependsOn(nativeMain)
         }
     }
 }

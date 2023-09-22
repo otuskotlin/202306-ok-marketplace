@@ -19,6 +19,10 @@ kotlin {
                 implementation(project(":ok-marketplace-api-v2-kmp"))
                 implementation(project(":ok-marketplace-mappers-v2"))
 
+                // logging
+                implementation(project(":ok-marketplace-api-log1"))
+                implementation(project(":ok-marketplace-mappers-log1"))
+
                 // Stubs
                 implementation(project(":ok-marketplace-stubs"))
 

@@ -57,6 +57,8 @@ class AppKafkaConsumer(
                         val resp = config.controllerHelper(
                             { strategy.deserialize(record.value(), this) },
                             { strategy.serialize(this) },
+                            this::class,
+                            "AppKafkaConsumer",
                         )
                         sendResponse(resp, outputTopic)
                     } catch (ex: Exception) {

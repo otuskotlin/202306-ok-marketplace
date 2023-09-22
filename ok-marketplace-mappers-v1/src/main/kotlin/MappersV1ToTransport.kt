@@ -18,6 +18,7 @@ fun MkplContext.toTransportAd(): IResponse = when (val cmd = command) {
 }
 
 fun MkplContext.toTransportCreate() = AdCreateResponse(
+    responseType = "create",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
@@ -25,6 +26,7 @@ fun MkplContext.toTransportCreate() = AdCreateResponse(
 )
 
 fun MkplContext.toTransportRead() = AdReadResponse(
+    responseType = "read",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
@@ -32,6 +34,7 @@ fun MkplContext.toTransportRead() = AdReadResponse(
 )
 
 fun MkplContext.toTransportUpdate() = AdUpdateResponse(
+    responseType = "update",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
@@ -39,6 +42,7 @@ fun MkplContext.toTransportUpdate() = AdUpdateResponse(
 )
 
 fun MkplContext.toTransportDelete() = AdDeleteResponse(
+    responseType = "delete",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
@@ -46,6 +50,7 @@ fun MkplContext.toTransportDelete() = AdDeleteResponse(
 )
 
 fun MkplContext.toTransportSearch() = AdSearchResponse(
+    responseType = "search",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
@@ -53,6 +58,7 @@ fun MkplContext.toTransportSearch() = AdSearchResponse(
 )
 
 fun MkplContext.toTransportOffers() = AdOffersResponse(
+    responseType = "offers",
     requestId = this.requestId.asString().takeIf { it.isNotBlank() },
     result = state.toResult(),
     errors = errors.toTransportErrors(),
