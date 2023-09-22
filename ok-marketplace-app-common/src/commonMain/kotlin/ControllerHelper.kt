@@ -1,7 +1,7 @@
 package ru.otus.otuskotlin.marketplace.app.common
 
 import kotlinx.datetime.Clock
-import ru.otus.otuskotlin.marketplace.api.logs.mapper.toMkplLog
+import ru.otus.otuskotlin.marketplace.api.logs.mapper.toLog
 import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.common.helpers.asMkplError
 import ru.otus.otuskotlin.marketplace.common.models.MkplState
@@ -24,7 +24,7 @@ suspend inline fun <T> IMkplAppSettings.controllerHelper(
             logger.info(
                 msg = "Request $logId processed for ${clazz.simpleName}",
                 marker = "BIZ",
-                data = ctx.toMkplLog()
+                data = ctx.toLog(logId)
             )
             ctx.toResponse()
         }
