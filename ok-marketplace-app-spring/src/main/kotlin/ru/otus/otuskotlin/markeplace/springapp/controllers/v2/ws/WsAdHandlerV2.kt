@@ -1,7 +1,6 @@
 package ru.otus.otuskotlin.markeplace.springapp.controllers.v2.ws
 
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
@@ -32,7 +31,9 @@ class WsAdHandlerV2(private val appSettings: MkplAppSettings) : TextWebSocketHan
             {
                 val msg = apiV2ResponseSerialize(toTransportInit())
                 session.sendMessage(TextMessage(msg))
-            }
+            },
+            this::class,
+            "WsAdHandlerV2-init",
         )
     }
 
@@ -51,14 +52,18 @@ class WsAdHandlerV2(private val appSettings: MkplAppSettings) : TextWebSocketHan
                 } else {
                     session.sendMessage(TextMessage(result))
                 }
-            }
+            },
+            this::class,
+            "WsAdHandlerV2-message",
         )
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus): Unit = runBlocking {
         appSettings.controllerHelper(
             { command = MkplCommand.FINISH },
-            {}
+            {},
+            this::class,
+            "WsAdHandlerV2-finish",
         )
         sessions.remove(session.id)
     }

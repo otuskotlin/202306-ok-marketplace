@@ -29,7 +29,9 @@ class WsAdHandlerV1(private val appSettings: MkplAppSettings) : TextWebSocketHan
             {
                 val msg = apiV1Mapper.writeValueAsString(toTransportInit())
                 session.sendMessage(TextMessage(msg))
-            }
+            },
+            this::class,
+            "WsAdHandlerV1-init",
         )
     }
 
@@ -48,14 +50,18 @@ class WsAdHandlerV1(private val appSettings: MkplAppSettings) : TextWebSocketHan
                 } else {
                     session.sendMessage(TextMessage(result))
                 }
-            }
+            },
+            this::class,
+            "WsAdHandlerV1-message",
         )
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus): Unit = runBlocking {
         appSettings.controllerHelper(
             { command = MkplCommand.FINISH },
-            {}
+            {},
+            this::class,
+            "WsAdHandlerV1-finish",
         )
         sessions.remove(session.id)
     }

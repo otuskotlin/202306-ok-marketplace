@@ -132,6 +132,8 @@ kotlin {
 
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
                 implementation(project(":ok-marketplace-lib-logging-logback"))
+                implementation("com.sndyuk:logback-more-appenders:1.8.8")
+                implementation("org.fluentd:fluent-logger:0.3.4")
 
                 // transport models
                 implementation(project(":ok-marketplace-api-v1-jackson"))
@@ -145,9 +147,6 @@ kotlin {
                 implementation(ktor("test-host")) // "io.ktor:ktor-server-test-host:$ktorVersion"
                 implementation(ktor("content-negotiation", prefix = "client-"))
                 implementation(ktor("websockets", prefix = "client-"))
-
-                implementation("com.sndyuk:logback-more-appenders:1.8.8")
-                implementation("org.fluentd:fluent-logger:0.3.4")
             }
         }
         val nativeMain by creating {

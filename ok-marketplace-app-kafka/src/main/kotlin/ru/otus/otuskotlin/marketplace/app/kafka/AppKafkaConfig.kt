@@ -2,6 +2,7 @@ package ru.otus.otuskotlin.marketplace.app.kafka
 
 import ru.otus.otuskotlin.marketplace.app.common.IMkplAppSettings
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
+import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 
 class AppKafkaConfig(
     val kafkaHosts: List<String> = KAFKA_HOSTS,
@@ -10,7 +11,8 @@ class AppKafkaConfig(
     val kafkaTopicOutV1: String = KAFKA_TOPIC_OUT_V1,
     val kafkaTopicInV2: String = KAFKA_TOPIC_IN_V2,
     val kafkaTopicOutV2: String = KAFKA_TOPIC_OUT_V2,
-    override val processor: MkplAdProcessor = MkplAdProcessor(),
+    override val corSettings: MkplCorSettings = MkplCorSettings(),
+    override val processor: MkplAdProcessor = MkplAdProcessor(corSettings),
 ): IMkplAppSettings {
     companion object {
         const val KAFKA_HOST_VAR = "KAFKA_HOSTS"

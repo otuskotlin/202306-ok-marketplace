@@ -3,6 +3,7 @@ package ru.otus.otuskotlin.marketplace.app.common
 import kotlinx.coroutines.test.runTest
 import ru.otus.otuskotlin.marketplace.api.v2.models.*
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
+import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.mappers.v2.fromTransport
 import ru.otus.otuskotlin.marketplace.mappers.v2.toTransportAd
 import kotlin.test.Test
@@ -24,13 +25,16 @@ class ControllerV2Test {
     )
 
     private val appSettings: IMkplAppSettings = object : IMkplAppSettings {
-        override val processor: MkplAdProcessor = MkplAdProcessor()
+        override val corSettings: MkplCorSettings = MkplCorSettings()
+        override val processor: MkplAdProcessor = MkplAdProcessor(corSettings)
     }
 
     private suspend fun createAdSpring(request: AdCreateRequest): AdCreateResponse =
         appSettings.controllerHelper(
             { fromTransport(request) },
-            { toTransportAd() as AdCreateResponse }
+            { toTransportAd() as AdCreateResponse },
+            this::class,
+            "createAdSpring"
         )
 
     class TestApplicationCall(private val request: IRequest) {
@@ -46,7 +50,9 @@ class ControllerV2Test {
     private suspend fun TestApplicationCall.createAdKtor(appSettings: IMkplAppSettings) {
         val resp = appSettings.controllerHelper(
             { fromTransport(receive<AdCreateRequest>()) },
-            { toTransportAd() }
+            { toTransportAd() },
+            this::class,
+            "createAdKtor",
         )
         respond(resp)
     }

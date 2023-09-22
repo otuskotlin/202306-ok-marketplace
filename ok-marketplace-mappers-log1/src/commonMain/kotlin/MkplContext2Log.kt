@@ -17,11 +17,24 @@ fun MkplContext.toMkplLog():MkplLogModel? {
     val adNone = MkplAd()
     return MkplLogModel(
         requestId = requestId.takeIf { it != MkplRequestId.NONE }?.asString(),
+        operation = command.toLogModel(),
         requestAd = adRequest.takeIf { it != adNone }?.toLog(),
         responseAd = adResponse.takeIf { it != adNone }?.toLog(),
         responseAds = adsResponse.takeIf { it.isNotEmpty() }?.filter { it != adNone }?.map { it.toLog() },
         requestFilter = adFilterRequest.takeIf { it != MkplAdFilter() }?.toLog(),
     ).takeIf { it != MkplLogModel() }
+}
+
+private fun MkplCommand.toLogModel(): MkplLogModel.Operation? = when(this) {
+    MkplCommand.CREATE -> MkplLogModel.Operation.CREATE
+    MkplCommand.READ -> MkplLogModel.Operation.READ
+    MkplCommand.UPDATE -> MkplLogModel.Operation.UPDATE
+    MkplCommand.DELETE -> MkplLogModel.Operation.DELETE
+    MkplCommand.SEARCH -> MkplLogModel.Operation.SEARCH
+    MkplCommand.OFFERS -> MkplLogModel.Operation.OFFERS
+    MkplCommand.INIT -> MkplLogModel.Operation.INIT
+    MkplCommand.FINISH -> MkplLogModel.Operation.FINISH
+    MkplCommand.NONE -> null
 }
 
 private fun MkplAdFilter.toLog() = AdFilterLog(

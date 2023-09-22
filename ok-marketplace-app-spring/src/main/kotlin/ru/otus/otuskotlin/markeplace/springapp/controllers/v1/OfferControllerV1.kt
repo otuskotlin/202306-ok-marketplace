@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.markeplace.springapp.api.v1.controller
+package ru.otus.otuskotlin.markeplace.springapp.controllers.v1
 
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,5 +17,5 @@ class OfferControllerV1(
 
     @PostMapping("offers")
     suspend fun searchOffers(@RequestBody request: AdOffersRequest): AdOffersResponse =
-        processV1(appSettings, request = request)
+        processV1(appSettings, request = request, this::class, "searchOffers")
 }
