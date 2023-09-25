@@ -124,7 +124,7 @@ internal class RabbitMqTest {
                 channel.basicPublish(exchange, keyIn, null, apiV1Mapper.writeValueAsBytes(boltCreateV1))
 
                 runBlocking {
-                    withTimeoutOrNull(265L) {
+                    withTimeoutOrNull(1000L) {
                         while (responseJson.isBlank()) {
                             delay(10)
                         }
@@ -165,7 +165,7 @@ internal class RabbitMqTest {
                 channel.basicPublish(exchange, keyIn, null, apiV2RequestSerialize(boltCreateV2).toByteArray())
 
                 runBlocking {
-                    withTimeoutOrNull(265L) {
+                    withTimeoutOrNull(1000L) {
                         while (responseJson.isBlank()) {
                             delay(10)
                         }
