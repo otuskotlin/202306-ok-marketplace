@@ -7,3 +7,4 @@
 !**/src/*Test/**/build/
 
 /.idea/
+**/yarn.lock
