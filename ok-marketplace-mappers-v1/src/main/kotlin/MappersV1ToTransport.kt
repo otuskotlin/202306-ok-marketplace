@@ -128,5 +128,6 @@ private fun MkplError.toTransportAd() = Error(
 private fun MkplState.toResult(): ResponseResult? = when (this) {
     MkplState.RUNNING -> ResponseResult.SUCCESS
     MkplState.FAILING -> ResponseResult.ERROR
+    MkplState.FINISHING -> ResponseResult.SUCCESS
     MkplState.NONE -> null
 }
