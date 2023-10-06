@@ -57,6 +57,7 @@ class MkplAdProcessor(
 
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
+                computeAdState("Вычисление состояния объявления")
             }
             operation("Изменить объявление", MkplCommand.UPDATE) {
                 stubs("Обработка стабов") {
