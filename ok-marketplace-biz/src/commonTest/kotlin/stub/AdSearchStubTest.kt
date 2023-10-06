@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.marketplace.biz.validation.stub
+package ru.otus.otuskotlin.marketplace.biz.stub
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
