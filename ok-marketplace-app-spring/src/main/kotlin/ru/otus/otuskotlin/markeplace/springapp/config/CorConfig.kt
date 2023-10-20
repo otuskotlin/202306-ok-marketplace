@@ -1,5 +1,6 @@
 package ru.otus.otuskotlin.markeplace.springapp.config
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.otus.otuskotlin.markeplace.springapp.models.MkplAppSettings
@@ -15,17 +16,33 @@ class CorConfig {
     fun loggerProvider(): MpLoggerProvider = MpLoggerProvider { mpLoggerLogback(it) }
 
     @Bean
-    fun corSettings(): MkplCorSettings = MkplCorSettings(
-        loggerProvider = loggerProvider()
+    fun prodRepository() = AdRepoInMemory()
+
+    @Bean
+    fun testRepository() = AdRepoInMemory()
+
+    @Bean
+    fun stubRepository() = AdRepoStub()
+
+    @Bean
+    fun corSettings(
+        @Qualifier("prodRepository") prodRepository: IAdRepository,
+        @Qualifier("testRepository") testRepository: IAdRepository,
+        @Qualifier("stubRepository") stubRepository: IAdRepository,
+    ): MkplCorSettings = MkplCorSettings(
+        loggerProvider = loggerProvider(),
+        repoStub = stubRepository,
+        repoTest = testRepository,
+        repoProd = prodRepository,
     )
 
     @Bean
-    fun processor() = MkplAdProcessor(corSettings())
-
-    @Bean
-    fun appSettings() = MkplAppSettings(
-        corSettings = corSettings(),
+    fun appSettings(corSettings: MkplCorSettings) = MkplAppSettings(
+        corSettings = corSettings,
         processor = processor()
     )
+
+    @Bean
+    fun mkplAdProcessor(corSettings: MkplCorSettings) = MkplAdProcessor(settings = corSettings)
 
 }

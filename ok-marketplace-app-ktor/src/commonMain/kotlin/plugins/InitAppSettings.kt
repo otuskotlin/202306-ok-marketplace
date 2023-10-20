@@ -8,7 +8,10 @@ import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 
 fun Application.initAppSettings(): MkplAppSettings {
     val corSettings = MkplCorSettings(
-        loggerProvider = getLoggerProviderConf()
+        loggerProvider = getLoggerProviderConf(),
+        repoTest = AdRepoInMemory(),
+        repoProd = AdRepoInMemory(),
+        repoStub = AdRepoStub(),
     )
     return MkplAppSettings(
         appUrls = environment.config.propertyOrNull("ktor.urls")?.getList() ?: emptyList(),
