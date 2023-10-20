@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.otus.otuskotlin.markeplace.springapp.models.MkplAppSettings
+import ru.otus.otuskotlin.marketplace.backend.repository.inmemory.AdRepoStub
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
+import ru.otus.otuskotlin.marketplace.common.repo.IAdRepository
 import ru.otus.otuskotlin.marketplace.logging.common.MpLoggerProvider
 import ru.otus.otuskotlin.marketplace.logging.jvm.mpLoggerLogback
+import ru.otus.otuskotlin.marketplace.repo.inmemory.AdRepoInMemory
 
 @Suppress("unused")
 @Configuration
@@ -37,12 +40,12 @@ class CorConfig {
     )
 
     @Bean
-    fun appSettings(corSettings: MkplCorSettings) = MkplAppSettings(
+    fun appSettings(corSettings: MkplCorSettings, processor: MkplAdProcessor) = MkplAppSettings(
         corSettings = corSettings,
-        processor = processor()
+        processor = processor,
     )
 
     @Bean
-    fun mkplAdProcessor(corSettings: MkplCorSettings) = MkplAdProcessor(settings = corSettings)
+    fun mkplAdProcessor(corSettings: MkplCorSettings) = MkplAdProcessor(corSettings = corSettings)
 
 }

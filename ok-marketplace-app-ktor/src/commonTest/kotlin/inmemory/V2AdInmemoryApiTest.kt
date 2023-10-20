@@ -1,10 +1,9 @@
-package ru.otus.otuskotlin.marketplace.app.ktor.repo
+package ru.otus.otuskotlin.marketplace.app.inmemory
 
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import ru.otus.otuskotlin.marketplace.api.v2.apiV2Mapper
 import ru.otus.otuskotlin.marketplace.api.v2.models.*

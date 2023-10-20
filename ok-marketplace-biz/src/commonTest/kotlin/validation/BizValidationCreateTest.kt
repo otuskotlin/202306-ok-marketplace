@@ -12,7 +12,6 @@ import kotlin.test.Test
 class BizValidationCreateTest {
 
     private val command = MkplCommand.CREATE
-    private val processor by lazy { MkplAdProcessor() }
     private val settings by lazy {
         MkplCorSettings(
             repoTest = AdRepoStub()

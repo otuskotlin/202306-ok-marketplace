@@ -42,10 +42,15 @@ dependencies {
 
     // biz
     implementation(project(":ok-marketplace-biz"))
-    implementation(project(mapOf("path" to ":ok-marketplace-lib-logging-logback")))
+    implementation(project(":ok-marketplace-lib-logging-logback"))
 
     // tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // repo
+    implementation(project(":ok-marketplace-repo-in-memory"))
+    implementation(project(":ok-marketplace-repo-stubs"))
+    testImplementation(project(":ok-marketplace-repo-tests"))
 
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux") // Controller, Service, etc..

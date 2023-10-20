@@ -91,6 +91,9 @@ kotlin {
                 implementation(project(":ok-marketplace-mappers-log1"))
                 implementation(project(":ok-marketplace-lib-logging-common"))
                 implementation(project(":ok-marketplace-lib-logging-kermit"))
+
+                implementation(project(":ok-marketplace-repo-in-memory"))
+                implementation(project(":ok-marketplace-repo-stubs"))
             }
         }
 
@@ -103,6 +106,8 @@ kotlin {
                 implementation(ktor("test-host"))
                 implementation(ktor("content-negotiation", prefix = "client-"))
                 implementation(ktor("websockets", prefix = "client-"))
+
+                implementation(project(":ok-marketplace-repo-tests"))
             }
         }
 

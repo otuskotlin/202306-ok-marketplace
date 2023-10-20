@@ -1,7 +1,10 @@
 package ru.otus.otuskotlin.marketplace.biz
 
+import ru.otus.otuskotlin.marketplace.biz.general.initRepo
+import ru.otus.otuskotlin.marketplace.biz.general.prepareResult
 import ru.otus.otuskotlin.marketplace.biz.groups.operation
 import ru.otus.otuskotlin.marketplace.biz.groups.stubs
+import ru.otus.otuskotlin.marketplace.biz.repo.*
 import ru.otus.otuskotlin.marketplace.biz.statemachine.computeAdState
 import ru.otus.otuskotlin.marketplace.biz.validation.*
 import ru.otus.otuskotlin.marketplace.biz.workers.*
@@ -9,14 +12,16 @@ import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.common.models.MkplAdId
 import ru.otus.otuskotlin.marketplace.common.models.MkplCommand
+import ru.otus.otuskotlin.marketplace.common.models.MkplState
 import ru.otus.otuskotlin.marketplace.cor.rootChain
 import ru.otus.otuskotlin.marketplace.cor.worker
+import ru.otus.otuskotlin.marketplace.cor.chain
 
 class MkplAdProcessor(
     @Suppress("unused")
     private val corSettings: MkplCorSettings = MkplCorSettings.NONE
 ) {
-    suspend fun exec(ctx: MkplContext) = BusinessChain.exec(ctx)
+    suspend fun exec(ctx: MkplContext) = BusinessChain.exec(ctx.apply { settings = corSettings })
 
     companion object {
         private val BusinessChain = rootChain<MkplContext> {
