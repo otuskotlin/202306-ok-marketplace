@@ -9,7 +9,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 class AdRepoInMemory(
-    initObjects: List<MkplAd> = emptyList(),
+    initObjects: Collection<MkplAd> = emptyList(),
     ttl: Duration = 2.minutes,
     val randomUuid: () -> String = { uuid4().toString() },
 ) : IAdRepository {

@@ -15,9 +15,9 @@ data class MkplContext(
     var stubCase: MkplStubs = MkplStubs.NONE,
 
     var adRepo: IAdRepository = IAdRepository.NONE,
-    var adRepoRead: MkplAd = MkplAd(),
-    var adRepoPrepare: MkplAd = MkplAd(),
-    var adRepoDone: MkplAd = MkplAd(),
+    var adRepoRead: MkplAd = MkplAd(), // То, что прочитали из репозитория
+    var adRepoPrepare: MkplAd = MkplAd(), // То, что готовим для сохранения в БД
+    var adRepoDone: MkplAd = MkplAd(),  // Результат, полученный из БД
     var adsRepoDone: MutableList<MkplAd> = mutableListOf(),
 
     var requestId: MkplRequestId = MkplRequestId.NONE,
