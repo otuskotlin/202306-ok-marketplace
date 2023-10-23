@@ -22,9 +22,8 @@ private fun String?.toAdLock() = this?.let { MkplAdLock(it) } ?: MkplAdLock.NONE
 private fun AdReadObject?.toInternal() = if (this != null) {
     MkplAd(id = id.toAdId())
 } else {
-    MkplAd.NONE
+    MkplAd()
 }
-private fun String?.toAdWithId() = MkplAd(id = this.toAdId())
 private fun IRequest?.requestId() = this?.requestId?.let { MkplRequestId(it) } ?: MkplRequestId.NONE
 private fun String?.toProductId() = this?.let { MkplProductId(it) } ?: MkplProductId.NONE
 
@@ -85,7 +84,7 @@ private fun AdDeleteObject?.toInternal(): MkplAd = if (this != null) {
         lock = lock.toAdLock(),
     )
 } else {
-    MkplAd.NONE
+    MkplAd()
 }
 
 fun MkplContext.fromTransport(request: AdSearchRequest) {
