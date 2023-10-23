@@ -75,51 +75,16 @@ Marketplace -- это площадка, на которой пользовате
 ## Модули бизнес-логики
 
 1. [ok-marketplace-stubs](ok-marketplace-stubs) - Стабы для ответов сервиса
+2. [ok-marketplace-lib-cor](ok-marketplace-lib-cor) - Библиотека цепочки обязанностей для бизнес-логики
+3. [ok-marketplace-biz](ok-marketplace-biz) - Модуль бизнес-логики приложения
+4. [ok-marketplace-lib-konform](ok-marketplace-lib-konform) - Применение библиотеки валидации Konform
 
-[//]: # (1. [ok-marketplace-biz]&#40;ok-marketplace-biz&#41; - Модуль бизнес-логики приложения)
+# (## Хранение, репозитории, базы данных)
 
-[//]: # ()
-
-[//]: # (## Хранение, репозитории, базы данных)
-
-[//]: # ()
-
-[//]: # (1. [ok-marketplace-repo-tests]&#40;ok-marketplace-repo-tests&#41; - Базовые тесты для репозиториев всех баз данных)
-
-[//]: # (2. [ok-marketplace-repo-inmemory]&#40;ok-marketplace-repo-inmemory&#41; - Репозиторий на базе кэша в памяти для тестирования)
-
+1. [ok-marketplace-repo-tests](ok-marketplace-repo-tests) - Базовые тесты для репозиториев всех баз данных
+2. [ok-marketplace-repo-in-memory](ok-marketplace-repo-in-memory) - Репозиторий на базе кэша в памяти для тестирования
 [//]: # (3. [ok-marketplace-repo-postgresql]&#40;ok-marketplace-repo-postgresql&#41; - Репозиторий на базе PostgreSQL)
 
 [//]: # (4. [ok-marketplace-repo-cassandra]&#40;ok-marketplace-repo-cassandra&#41; - Репозиторий на базе Cassandra)
 
 [//]: # (5. [ok-marketplace-repo-gremlin]&#40;ok-marketplace-repo-gremlin&#41; - Репозиторий на базе Apache TinkerPop Gremlin и ArcadeDb)
-
-[//]: # (### Функции &#40;эндпониты&#41;)
-
-[//]: # ()
-
-[//]: # (1. CRUDS &#40;create, read, update, delete, search&#41; для объявлений &#40;ad&#41;)
-
-[//]: # (1. ad.offers &#40;опционально&#41;)
-
-[//]: # ()
-
-[//]: # (### Описание сущности ad)
-
-[//]: # ()
-
-[//]: # (1. Info)
-
-[//]: # (    1. Title)
-
-[//]: # (    2. Description)
-
-[//]: # (    3. Owner)
-
-[//]: # (    4. Visibility)
-
-[//]: # (2. DealSide: Demand/Supply)
-
-[//]: # (3. ProductType &#40;гаечный ключ, ...&#41;)
-
-[//]: # (4. ProductId - идентификатор модели товара)
