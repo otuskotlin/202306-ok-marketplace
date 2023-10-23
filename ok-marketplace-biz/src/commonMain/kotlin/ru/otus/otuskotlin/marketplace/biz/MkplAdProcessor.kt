@@ -94,10 +94,13 @@ class MkplAdProcessor(
                 validation {
                     worker("Копируем поля в adValidating") { adValidating = adRequest.deepCopy() }
                     worker("Очистка id") { adValidating.id = MkplAdId(adValidating.id.asString().trim()) }
+                    worker("Очистка lock") { adValidating.lock = MkplAdLock(adValidating.lock.asString().trim()) }
                     worker("Очистка заголовка") { adValidating.title = adValidating.title.trim() }
                     worker("Очистка описания") { adValidating.description = adValidating.description.trim() }
                     validateIdNotEmpty("Проверка на непустой id")
                     validateIdProperFormat("Проверка формата id")
+                    validateLockNotEmpty("Проверка на непустой lock")
+                    validateLockProperFormat("Проверка формата lock")
                     validateTitleNotEmpty("Проверка на непустой заголовок")
                     validateTitleHasContent("Проверка на наличие содержания в заголовке")
                     validateDescriptionNotEmpty("Проверка на непустое описание")
@@ -124,8 +127,11 @@ class MkplAdProcessor(
                     worker("Копируем поля в adValidating") {
                         adValidating = adRequest.deepCopy() }
                     worker("Очистка id") { adValidating.id = MkplAdId(adValidating.id.asString().trim()) }
+                    worker("Очистка lock") { adValidating.lock = MkplAdLock(adValidating.lock.asString().trim()) }
                     validateIdNotEmpty("Проверка на непустой id")
                     validateIdProperFormat("Проверка формата id")
+                    validateLockNotEmpty("Проверка на непустой lock")
+                    validateLockProperFormat("Проверка формата lock")
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
                 chain {
