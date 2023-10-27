@@ -6,7 +6,9 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.withTimeout
 import ru.otus.otuskotlin.marketplace.api.v1.apiV1Mapper
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
+import ru.otus.otuskotlin.marketplace.app.MkplAppSettings
 import ru.otus.otuskotlin.marketplace.app.moduleJvm
+import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -128,7 +130,7 @@ class V1WebsocketStubTest {
         request: Any,
         crossinline assertBlock: (T) -> Unit
     ) = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = createClient {
             install(WebSockets)
         }
