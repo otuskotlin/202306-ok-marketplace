@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.marketplace.repo
+package ru.otus.otuskotlin.marketplace.app.repo
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -8,21 +8,23 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Test
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
 import ru.otus.otuskotlin.marketplace.app.MkplAppSettings
 import ru.otus.otuskotlin.marketplace.app.moduleJvm
+import ru.otus.otuskotlin.marketplace.app.repo.SqlTestCompanion.repoUnderTestContainer
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.common.models.MkplAdId
 import ru.otus.otuskotlin.marketplace.common.models.MkplAdLock
 import ru.otus.otuskotlin.marketplace.common.models.MkplDealSide
 import ru.otus.otuskotlin.marketplace.common.models.MkplVisibility
-import ru.otus.otuskotlin.marketplace.repo.inmemory.AdRepoInMemory
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class V1AdInmemoryApiTest {
+class V1AdPostgresApiTest {
     private val uuidOld = "10000000-0000-0000-0000-000000000001"
     private val uuidNew = "10000000-0000-0000-0000-000000000002"
     private val uuidSup = "10000000-0000-0000-0000-000000000003"
@@ -42,9 +44,24 @@ class V1AdInmemoryApiTest {
         visibility = MkplVisibility.VISIBLE_PUBLIC
     }
 
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun tearUp() {
+            SqlTestCompanion.start()
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun tearDown() {
+            SqlTestCompanion.stop()
+        }
+    }
+
     @Test
     fun create() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "create", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -79,7 +96,8 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun read() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "read", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -103,7 +121,8 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun update() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "update", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -140,7 +159,8 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun delete() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "delete", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -151,7 +171,7 @@ class V1AdInmemoryApiTest {
                 requestId = "12345",
                 ad = AdDeleteObject(
                     id = uuidOld,
-                    lock = initAd.lock.asString()
+                    lock = initAd.lock.asString(),
                 ),
                 debug = AdDebug(
                     mode = AdRequestDebugMode.TEST,
@@ -167,7 +187,8 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun search() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "search", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -192,7 +213,8 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun offers() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd, initAdSupply), randomUuid = { uuidNew })
+//        val repo = AdRepoInMemory(initObjects = listOf(initAd, initAdSupply), randomUuid = { uuidNew })
+        val repo = repoUnderTestContainer(test = "offers", initObjects = listOf(initAd, initAdSupply), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }

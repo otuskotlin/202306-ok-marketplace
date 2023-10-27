@@ -30,6 +30,7 @@ class RepoAdSQL(
     initObjects: Collection<MkplAd> = emptyList(),
     val randomUuid: () -> String = { uuid4().toString() },
 ) : IAdRepository {
+    private val adTable = AdTable(properties.table)
 
     init {
         val driver = when {
@@ -42,18 +43,18 @@ class RepoAdSQL(
         )
 
         transaction {
-            if (properties.dropDatabase) SchemaUtils.drop(AdTable)
-            SchemaUtils.create(AdTable)
+//            if (properties.dropDatabase) SchemaUtils.drop(AdTable)
+            SchemaUtils.create(adTable)
             initObjects.forEach { createAd(it) }
         }
     }
 
     private fun createAd(ad: MkplAd): MkplAd {
-        val res = AdTable.insert {
+        val res = adTable.insert {
             to(it, ad, randomUuid)
         }
 
-        return AdTable.from(res)
+        return adTable.from(res)
     }
 
     private fun <T> transactionWrapper(block: () -> T, handle: (Exception) -> T): T =
@@ -73,10 +74,10 @@ class RepoAdSQL(
     }
 
     private fun read(id: MkplAdId): DbAdResponse {
-        val res = AdTable.select {
-            AdTable.id eq id.asString()
+        val res = adTable.select {
+            adTable.id eq id.asString()
         }.singleOrNull() ?: return DbAdResponse.errorNotFound
-        return DbAdResponse.success(AdTable.from(res))
+        return DbAdResponse.success(adTable.from(res))
     }
 
     override suspend fun readAd(rq: DbAdIdRequest): DbAdResponse = transactionWrapper { read(rq.id) }
@@ -89,9 +90,9 @@ class RepoAdSQL(
         transactionWrapper {
             if (id == MkplAdId.NONE) return@transactionWrapper DbAdResponse.errorEmptyId
 
-            val current = AdTable.select { AdTable.id eq id.asString() }
+            val current = adTable.select { adTable.id eq id.asString() }
                 .firstOrNull()
-                ?.let { AdTable.from(it) }
+                ?.let { adTable.from(it) }
 
             when {
                 current == null -> DbAdResponse.errorNotFound
@@ -102,37 +103,37 @@ class RepoAdSQL(
 
 
     override suspend fun updateAd(rq: DbAdRequest): DbAdResponse = update(rq.ad.id, rq.ad.lock) {
-        AdTable.update({ AdTable.id eq rq.ad.id.asString() }) {
+        adTable.update({ adTable.id eq rq.ad.id.asString() }) {
             to(it, rq.ad.copy(lock = MkplAdLock(randomUuid())), randomUuid)
         }
         read(rq.ad.id)
     }
 
     override suspend fun deleteAd(rq: DbAdIdRequest): DbAdResponse = update(rq.id, rq.lock) {
-        AdTable.deleteWhere { id eq rq.id.asString() }
+        adTable.deleteWhere { id eq rq.id.asString() }
         DbAdResponse.success(it)
     }
 
     override suspend fun searchAd(rq: DbAdFilterRequest): DbAdsResponse =
         transactionWrapper({
-            val res = AdTable.select {
+            val res = adTable.select {
                 buildList {
                     add(Op.TRUE)
                     if (rq.ownerId != MkplUserId.NONE) {
-                        add(AdTable.owner eq rq.ownerId.asString())
+                        add(adTable.owner eq rq.ownerId.asString())
                     }
                     if (rq.dealSide != MkplDealSide.NONE) {
-                        add(AdTable.dealSide eq rq.dealSide)
+                        add(adTable.dealSide eq rq.dealSide)
                     }
                     if (rq.titleFilter.isNotBlank()) {
                         add(
-                            (AdTable.title like "%${rq.titleFilter}%")
-                                    or (AdTable.description like "%${rq.titleFilter}%")
+                            (adTable.title like "%${rq.titleFilter}%")
+                                    or (adTable.description like "%${rq.titleFilter}%")
                         )
                     }
                 }.reduce { a, b -> a and b }
             }
-            DbAdsResponse(data = res.map { AdTable.from(it) }, isSuccess = true)
+            DbAdsResponse(data = res.map { adTable.from(it) }, isSuccess = true)
         }, {
             DbAdsResponse.error(it.asMkplError())
         })

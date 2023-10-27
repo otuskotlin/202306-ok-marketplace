@@ -10,13 +10,15 @@ import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
 import org.junit.Test
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
+import ru.otus.otuskotlin.marketplace.app.MkplAppSettings
 import ru.otus.otuskotlin.marketplace.app.moduleJvm
+import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import kotlin.test.assertEquals
 
 class V1AdStubApiTest {
     @Test
     fun create() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/create") {
@@ -44,7 +46,7 @@ class V1AdStubApiTest {
 
     @Test
     fun read() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/read") {
@@ -66,7 +68,7 @@ class V1AdStubApiTest {
 
     @Test
     fun update() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/update") {
@@ -94,7 +96,7 @@ class V1AdStubApiTest {
 
     @Test
     fun delete() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/delete") {
@@ -118,7 +120,7 @@ class V1AdStubApiTest {
 
     @Test
     fun search() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/search") {
@@ -140,7 +142,7 @@ class V1AdStubApiTest {
 
     @Test
     fun offers() = testApplication {
-        application { moduleJvm() }
+        application { moduleJvm(MkplAppSettings(corSettings = MkplCorSettings())) }
         val client = myClient()
 
         val response = client.post("/v1/ad/offers") {

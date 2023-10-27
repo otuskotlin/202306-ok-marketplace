@@ -1,7 +1,9 @@
-package ru.otus.otuskotlin.marketplace.backend.repo.sql
+package ru.otus.otuskotlin.marketplace.app.repo
 
 import com.benasher44.uuid.uuid4
 import org.testcontainers.containers.PostgreSQLContainer
+import ru.otus.otuskotlin.marketplace.backend.repo.sql.RepoAdSQL
+import ru.otus.otuskotlin.marketplace.backend.repo.sql.SqlProperties
 import ru.otus.otuskotlin.marketplace.common.models.MkplAd
 import java.time.Duration
 
@@ -18,8 +20,15 @@ object SqlTestCompanion {
             withPassword(PASS)
             withDatabaseName(SCHEMA)
             withStartupTimeout(Duration.ofSeconds(300L))
-            start()
         }
+    }
+
+    fun start() {
+        container.start()
+    }
+
+    fun stop() {
+        container.stop()
     }
 
     private val url: String by lazy { container.jdbcUrl }
@@ -29,16 +38,15 @@ object SqlTestCompanion {
         initObjects: Collection<MkplAd> = emptyList(),
         randomUuid: () -> String = { uuid4().toString() },
     ): RepoAdSQL {
-        println("CREATING POSTGRES REPO for $test")
         return RepoAdSQL(
-            SqlProperties(
+            properties = SqlProperties(
                 url = url,
                 user = USER,
                 password = PASS,
                 schema = SCHEMA,
                 table = "ad-$test",
             ),
-            initObjects,
+            initObjects = initObjects,
             randomUuid = randomUuid
         )
     }

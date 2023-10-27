@@ -11,7 +11,7 @@ import ru.otus.otuskotlin.marketplace.common.models.MkplDealSide
 import ru.otus.otuskotlin.marketplace.common.models.MkplUserId
 import ru.otus.otuskotlin.marketplace.common.models.MkplVisibility
 
-object AdTable : Table("ad") {
+class AdTable(tableName: String = "ad") : Table(tableName) {
     val id = varchar("id", 128)
     val title = varchar("title", 128)
     val description = varchar("description", 512)
@@ -19,6 +19,9 @@ object AdTable : Table("ad") {
     val visibility = enumeration("visibility", MkplVisibility::class)
     val dealSide = enumeration("deal_side", MkplDealSide::class)
     val lock = varchar("lock", 50)
+    init {
+        println("TABLE_NAME: $tableName")
+    }
 
     override val primaryKey = PrimaryKey(id)
 

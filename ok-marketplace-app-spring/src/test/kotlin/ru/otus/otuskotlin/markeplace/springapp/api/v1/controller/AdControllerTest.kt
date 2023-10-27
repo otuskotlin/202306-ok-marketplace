@@ -1,34 +1,34 @@
 package ru.otus.otuskotlin.markeplace.springapp.api.v1.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.coVerify
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
-import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.web.reactive.function.BodyInserters
 import ru.otus.otuskotlin.markeplace.springapp.config.CorConfig
 import ru.otus.otuskotlin.markeplace.springapp.controllers.v1.OfferControllerV1
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
+import ru.otus.otuskotlin.marketplace.backend.repo.sql.RepoAdSQL
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.mappers.v1.*
 
-@WebFluxTest(AdControllerV1::class, OfferControllerV1::class)
-@Import(CorConfig::class)
+// Temporary simple test with stubs
+@WebFluxTest(AdControllerV1::class, OfferControllerV1::class, CorConfig::class)
 internal class AdControllerTest {
     @Autowired
     private lateinit var webClient: WebTestClient
 
     @MockkBean(relaxUnitFun = true)
-    lateinit var processor: MkplAdProcessor
+    private lateinit var processor: MkplAdProcessor
 
-    @Autowired
-    private lateinit var mapper: ObjectMapper
+    @Suppress("unused")
+    @MockkBean
+    private lateinit var repo: RepoAdSQL
 
     @Test
     fun createAd() = testStubAd(
@@ -87,8 +87,7 @@ internal class AdControllerTest {
             .expectBody(Res::class.java)
             .value {
                 println("RESPONSE: $it")
-                val expectedResponse =  mapper.readValue(mapper.writeValueAsString(responseObj as IResponse), IResponse::class.java)
-                Assertions.assertThat(it).isEqualTo(expectedResponse)
+                assertThat(it).isEqualTo(responseObj)
             }
         coVerify { processor.exec(any()) }
     }
