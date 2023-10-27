@@ -8,7 +8,7 @@ import ru.otus.otuskotlin.marketplace.common.models.*
 class AdTable(tableName: String = "ad") : Table(tableName) {
     val id = varchar("id", 128)
     val title = varchar("title", 128)
-    val description = varchar("description", 512)
+    val description = text("description")
     val owner = varchar("owner", 128)
     val visibility = enumeration("visibility", MkplVisibility::class)
     val dealSide = enumeration("deal_side", MkplDealSide::class)
