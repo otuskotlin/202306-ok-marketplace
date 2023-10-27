@@ -92,7 +92,7 @@ class RepoAdSQL(
             if (id == MkplAdId.NONE) return@transactionWrapper DbAdResponse.errorEmptyId
 
             val current = adTable.select { adTable.id eq id.asString() }
-                .firstOrNull()
+                .singleOrNull()
                 ?.let { adTable.from(it) }
 
             when {

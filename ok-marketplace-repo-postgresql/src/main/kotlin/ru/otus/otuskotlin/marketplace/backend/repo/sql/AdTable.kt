@@ -13,9 +13,6 @@ class AdTable(tableName: String = "ad") : Table(tableName) {
     val visibility = enumeration("visibility", MkplVisibility::class)
     val dealSide = enumeration("deal_side", MkplDealSide::class)
     val lock = varchar("lock", 50)
-    init {
-        println("TABLE_NAME: $tableName")
-    }
 
     override val primaryKey = PrimaryKey(id)
 
