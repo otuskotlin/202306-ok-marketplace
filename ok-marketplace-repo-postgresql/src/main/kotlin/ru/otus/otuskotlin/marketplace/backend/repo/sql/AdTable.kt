@@ -2,14 +2,8 @@ package ru.otus.otuskotlin.marketplace.backend.repo.sql
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import ru.otus.otuskotlin.marketplace.common.models.MkplAd
-import ru.otus.otuskotlin.marketplace.common.models.MkplAdId
-import ru.otus.otuskotlin.marketplace.common.models.MkplAdLock
-import ru.otus.otuskotlin.marketplace.common.models.MkplDealSide
-import ru.otus.otuskotlin.marketplace.common.models.MkplUserId
-import ru.otus.otuskotlin.marketplace.common.models.MkplVisibility
+import ru.otus.otuskotlin.marketplace.common.models.*
 
 class AdTable(tableName: String = "ad") : Table(tableName) {
     val id = varchar("id", 128)
@@ -25,18 +19,6 @@ class AdTable(tableName: String = "ad") : Table(tableName) {
 
     override val primaryKey = PrimaryKey(id)
 
-    fun from(res : InsertStatement<Number>) =MkplAd(
-        id = MkplAdId(res[id].toString()),
-        title = res[title],
-        description = res[description],
-        ownerId = MkplUserId(res[owner].toString()),
-        visibility = res[visibility],
-        adType = res[dealSide],
-        lock = MkplAdLock(res[lock])
-    )
-
-    // копипаста, можно избавиться, сделав свой интерфейс и обертки над InsertStatement и ResultRow
-    // но ради двух методов нет смысла
     fun from(res : ResultRow) = MkplAd(
         id = MkplAdId(res[id].toString()),
         title = res[title],

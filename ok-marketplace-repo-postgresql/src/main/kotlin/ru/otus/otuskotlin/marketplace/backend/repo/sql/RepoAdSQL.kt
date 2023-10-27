@@ -43,18 +43,19 @@ class RepoAdSQL(
         )
 
         transaction {
-//            if (properties.dropDatabase) SchemaUtils.drop(AdTable)
             SchemaUtils.create(adTable)
             initObjects.forEach { createAd(it) }
         }
     }
 
     private fun createAd(ad: MkplAd): MkplAd {
-        val res = adTable.insert {
-            to(it, ad, randomUuid)
-        }
-
-        return adTable.from(res)
+        val res = adTable
+            .insert {
+                to(it, ad, randomUuid)
+            }
+            .resultedValues
+            ?.map { adTable.from(it) }
+        return res?.first() ?: throw RuntimeException("BD error: insert statement returned empty result")
     }
 
     private fun <T> transactionWrapper(block: () -> T, handle: (Exception) -> T): T =
