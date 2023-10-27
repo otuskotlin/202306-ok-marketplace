@@ -32,17 +32,18 @@ class RepoAdSQL(
 ) : IAdRepository {
     private val adTable = AdTable(properties.table)
 
+    private val driver = when {
+        properties.url.startsWith("jdbc:postgresql://") -> "org.postgresql.Driver"
+        else -> throw IllegalArgumentException("Unknown driver for url ${properties.url}")
+    }
+
+    private val conn = Database.connect(
+        properties.url, driver, properties.user, properties.password
+    )
+
+
     init {
-        val driver = when {
-            properties.url.startsWith("jdbc:postgresql://") -> "org.postgresql.Driver"
-            else -> throw IllegalArgumentException("Unknown driver for url ${properties.url}")
-        }
-
-        Database.connect(
-            properties.url, driver, properties.user, properties.password
-        )
-
-        transaction {
+        transaction(conn) {
             SchemaUtils.create(adTable)
             initObjects.forEach { createAd(it) }
         }
@@ -60,7 +61,7 @@ class RepoAdSQL(
 
     private fun <T> transactionWrapper(block: () -> T, handle: (Exception) -> T): T =
         try {
-            transaction {
+            transaction(conn) {
                 block()
             }
         } catch (e: Exception) {
