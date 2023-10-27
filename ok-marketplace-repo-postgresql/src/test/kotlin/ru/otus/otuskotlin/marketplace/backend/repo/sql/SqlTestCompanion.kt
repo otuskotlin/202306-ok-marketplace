@@ -29,7 +29,6 @@ object SqlTestCompanion {
         initObjects: Collection<MkplAd> = emptyList(),
         randomUuid: () -> String = { uuid4().toString() },
     ): RepoAdSQL {
-        println("CREATING POSTGRES REPO for $test")
         return RepoAdSQL(
             SqlProperties(
                 url = url,
