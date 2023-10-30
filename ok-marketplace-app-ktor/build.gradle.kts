@@ -147,6 +147,7 @@ kotlin {
                 implementation(project(":ok-marketplace-mappers-v1"))
 
                 implementation(project(":ok-marketplace-repo-postgresql"))
+                implementation(project(":ok-marketplace-repo-cassandra"))
             }
         }
 
