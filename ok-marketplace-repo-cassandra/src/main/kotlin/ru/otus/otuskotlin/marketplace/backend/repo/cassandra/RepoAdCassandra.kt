@@ -100,33 +100,6 @@ class RepoAdCassandra(
         errorToResponse
     )
 
-    private suspend inline fun readAndDoDbAction(
-        name: String,
-        id: MkplAdId,
-        successResult: MkplAd?,
-        daoAction: () -> CompletionStage<Boolean>,
-        errorToResponse: (Exception) -> DbAdResponse
-    ): DbAdResponse =
-        if (id == MkplAdId.NONE)
-            ID_IS_EMPTY
-        else doDbAction(
-            name,
-            {
-                val read = dao.read(id.asString()).await()
-                if (read == null) ID_NOT_FOUND
-                else {
-                    val success = daoAction().await()
-                    if (success) DbAdResponse.success(successResult ?: read.toAdModel())
-                    else DbAdResponse(
-                        read.toAdModel(),
-                        false,
-                        CONCURRENT_MODIFICATION.errors
-                    )
-                }
-            },
-            errorToResponse
-        )
-
     private inline fun <Response> doDbAction(
         name: String,
         daoAction: () -> Response,
@@ -163,27 +136,63 @@ class RepoAdCassandra(
         )
 
     override suspend fun updateAd(rq: DbAdRequest): DbAdResponse {
+        val idStr = rq.ad.id.asString()
         val prevLock = rq.ad.lock.asString()
         val new = rq.ad.copy(lock = MkplAdLock(randomUuid()))
         val dto = AdCassandraDTO(new)
 
-        return readAndDoDbAction(
+        return doDbAction(
             "update",
-            rq.ad.id,
-            new,
-            { dao.update(dto, prevLock) },
+            {
+                val res = dao.update(dto, prevLock).await()
+                val isSuccess = res.wasApplied()
+                val resultField = res.one()
+                    ?.takeIf { it.columnDefinitions.contains("lock") }
+                    ?.getString(AdCassandraDTO.COLUMN_LOCK)
+                    ?.takeIf { it.isNotBlank() }
+                when {
+                    // Два варианта почти эквивалентны, выбирайте который вам больше подходит
+                    isSuccess -> DbAdResponse.success(new)
+                    // res.wasApplied() -> DbAdResponse.success(dao.read(idStr).await()?.toAdModel())
+                    resultField == null -> DbAdResponse(null, false, ID_NOT_FOUND.errors)
+                    else -> DbAdResponse(
+                        dao.read(idStr).await()?.toAdModel(),
+                        false,
+                        CONCURRENT_MODIFICATION.errors
+                    )
+                }
+            },
             ::errorToAdResponse
         )
     }
 
-    override suspend fun deleteAd(rq: DbAdIdRequest): DbAdResponse =
-        readAndDoDbAction(
+    override suspend fun deleteAd(rq: DbAdIdRequest): DbAdResponse {
+        return doDbAction(
             "delete",
-            rq.id,
-            null,
-            { dao.delete(rq.id.asString(), rq.lock.asString()) },
+            {
+                val idStr = rq.id.asString()
+                val prevLock = rq.lock.asString()
+                val oldAd = dao.read(idStr).await()?.toAdModel() ?: return@doDbAction ID_NOT_FOUND
+                val res = dao.delete(idStr, prevLock).await()
+                val isSuccess = res.wasApplied()
+                val resultField = res.one()
+                    ?.takeIf { it.columnDefinitions.contains("lock") }
+                    ?.getString(AdCassandraDTO.COLUMN_LOCK)
+                    ?.takeIf { it.isNotBlank() }
+                when {
+                    // Два варианта почти эквивалентны, выбирайте который вам больше подходит
+                    isSuccess -> DbAdResponse.success(oldAd)
+                    resultField == null -> DbAdResponse(null, false, ID_NOT_FOUND.errors)
+                    else -> DbAdResponse(
+                        dao.read(idStr).await()?.toAdModel(),
+                        false,
+                        CONCURRENT_MODIFICATION.errors
+                    )
+                }
+            },
             ::errorToAdResponse
         )
+    }
 
 
     override suspend fun searchAd(rq: DbAdFilterRequest): DbAdsResponse =

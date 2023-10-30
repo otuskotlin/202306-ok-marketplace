@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":ok-marketplace-common"))
 
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk9:$coroutinesVersion")
 
     implementation("com.benasher44:uuid:$kmpUUIDVersion")
 

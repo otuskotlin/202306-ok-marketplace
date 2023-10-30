@@ -28,7 +28,7 @@ data class AdCassandraDTO(
     @field:CqlName(COLUMN_AD_TYPE)
     var adType: AdDealSide? = null,
     @field:CqlName(COLUMN_LOCK)
-    var lock: String?
+    var lock: String?,
 ) {
     constructor(adModel: MkplAd) : this(
         ownerId = adModel.ownerId.takeIf { it != MkplUserId.NONE }?.asString(),
