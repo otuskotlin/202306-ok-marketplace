@@ -147,7 +147,7 @@ class RepoAdCassandra(
                 val res = dao.update(dto, prevLock).await()
                 val isSuccess = res.wasApplied()
                 val resultField = res.one()
-                    ?.takeIf { it.columnDefinitions.contains("lock") }
+                    ?.takeIf { it.columnDefinitions.contains(AdCassandraDTO.COLUMN_LOCK) }
                     ?.getString(AdCassandraDTO.COLUMN_LOCK)
                     ?.takeIf { it.isNotBlank() }
                 when {
@@ -176,7 +176,7 @@ class RepoAdCassandra(
                 val res = dao.delete(idStr, prevLock).await()
                 val isSuccess = res.wasApplied()
                 val resultField = res.one()
-                    ?.takeIf { it.columnDefinitions.contains("lock") }
+                    ?.takeIf { it.columnDefinitions.contains(AdCassandraDTO.COLUMN_LOCK) }
                     ?.getString(AdCassandraDTO.COLUMN_LOCK)
                     ?.takeIf { it.isNotBlank() }
                 when {
