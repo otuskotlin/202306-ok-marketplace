@@ -23,6 +23,7 @@ import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.common.models.*
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
 import java.time.Duration
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
@@ -74,7 +75,7 @@ class V1AdGremlinApiTest {
         val response = client.post("/v1/ad/read") {
             val requestObj = AdReadRequest(
                 requestId = "12345",
-                ad = AdReadObject(uuidOld),
+                ad = AdReadObject(initAd.id.asString()),
                 debug = AdDebug(
                     mode = AdRequestDebugMode.TEST,
                 )
@@ -84,7 +85,7 @@ class V1AdGremlinApiTest {
         }
         val responseObj = response.body<AdReadResponse>()
         assertEquals(200, response.status.value)
-        assertEquals(uuidOld, responseObj.ad?.id)
+        assertEquals(initAd.id.asString(), responseObj.ad?.id)
     }
 
     @Test
@@ -96,7 +97,7 @@ class V1AdGremlinApiTest {
         val client = myClient()
 
         val adUpdate = AdUpdateObject(
-            id = uuidOld,
+            id = initAd.id.asString(),
             title = "Болт",
             description = "КРУТЕЙШИЙ",
             adType = DealSide.DEMAND,
@@ -126,7 +127,6 @@ class V1AdGremlinApiTest {
 
     @Test
     fun delete() = testApplication {
-//        val repo = repoUnderTestContainer(test = "delete", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -136,8 +136,8 @@ class V1AdGremlinApiTest {
             val requestObj = AdDeleteRequest(
                 requestId = "12345",
                 ad = AdDeleteObject(
-                    id = uuidOld,
-                    lock = initAd.lock.asString(),
+                    id = initAdDelete.id.asString(),
+                    lock = initAdDelete.lock.asString(),
                 ),
                 debug = AdDebug(
                     mode = AdRequestDebugMode.TEST,
@@ -148,7 +148,7 @@ class V1AdGremlinApiTest {
         }
         val responseObj = response.body<AdDeleteResponse>()
         assertEquals(200, response.status.value)
-        assertEquals(uuidOld, responseObj.ad?.id)
+        assertEquals(initAdDelete.id.asString(), responseObj.ad?.id)
     }
 
     @Test
@@ -173,15 +173,11 @@ class V1AdGremlinApiTest {
         val responseObj = response.body<AdSearchResponse>()
         assertEquals(200, response.status.value)
         assertNotEquals(0, responseObj.ads?.size)
-        assertEquals(uuidOld, responseObj.ads?.first()?.id)
+        assertContains(responseObj.ads?.map { it.id }?: emptyList(), initAd.id.asString())
     }
 
     @Test
     fun offers() = testApplication {
-//        val repo = repoUnderTestContainer(
-//            test = "offers",
-//            initObjects = listOf(initAd, initAdSupply),
-//            randomUuid = )
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -191,7 +187,7 @@ class V1AdGremlinApiTest {
             val requestObj = AdOffersRequest(
                 requestId = "12345",
                 ad = AdReadObject(
-                    id = uuidOld,
+                    id = initAd.id.asString(),
                 ),
                 debug = AdDebug(
                     mode = AdRequestDebugMode.TEST,
@@ -203,7 +199,7 @@ class V1AdGremlinApiTest {
         val responseObj = response.body<AdOffersResponse>()
         assertEquals(200, response.status.value)
         assertNotEquals(0, responseObj.ads?.size)
-        assertEquals(uuidSup, responseObj.ads?.first()?.id)
+        assertEquals(initAdSupply.id.asString(), responseObj.ads?.first()?.id)
     }
 
     private fun ApplicationTestBuilder.myClient() = createClient {
@@ -256,30 +252,45 @@ class V1AdGremlinApiTest {
 
         private val uuidOld = "10000000-0000-0000-0000-000000000001"
         private val uuidNew = "10000000-0000-0000-0000-000000000002"
-        private val uuidSup = "10000000-0000-0000-0000-000000000003"
-        private val initAd = MkplAdStub.prepareResult {
-            id = MkplAdId(uuidOld)
-            title = "abc"
-            description = "abc"
-            adType = MkplDealSide.DEMAND
-            visibility = MkplVisibility.VISIBLE_PUBLIC
-            lock = MkplAdLock(uuidOld)
-        }
-        private val initAdSupply = MkplAdStub.prepareResult {
-            id = MkplAdId(uuidSup)
-            title = "abc"
-            description = "abc"
-            adType = MkplDealSide.SUPPLY
-            visibility = MkplVisibility.VISIBLE_PUBLIC
+
+        private val initObjects = listOf(
+            MkplAdStub.prepareResult {
+                id = MkplAdId.NONE
+                title = "abc"
+                description = "abc"
+                adType = MkplDealSide.DEMAND
+                visibility = MkplVisibility.VISIBLE_PUBLIC
+                lock = MkplAdLock(uuidOld)
+            },
+            MkplAdStub.prepareResult {
+                id = MkplAdId.NONE
+                title = "delete"
+                description = "delete"
+                adType = MkplDealSide.DEMAND
+                visibility = MkplVisibility.VISIBLE_PUBLIC
+                lock = MkplAdLock(uuidOld)
+            },
+            MkplAdStub.prepareResult {
+                id = MkplAdId.NONE
+                title = "abc"
+                description = "abc"
+                adType = MkplDealSide.SUPPLY
+                visibility = MkplVisibility.VISIBLE_PUBLIC
+            }
+        )
+        private val repo by lazy {
+            AdRepoGremlin(
+                hosts = container.host,
+                user = USER,
+                pass = PASS,
+                port = container.getMappedPort(8182),
+                initObjects = initObjects,
+                randomUuid = { uuidNew }
+            )
         }
 
-        private val repo = AdRepoGremlin(
-            hosts = container.host,
-            user = USER,
-            pass = PASS,
-            port = container.getMappedPort(8182),
-            initObjects = listOf(initAd, initAdSupply),
-            randomUuid = { uuidNew }
-        )
+        private val initAd = repo.initializedObjects.first()
+        private val initAdDelete = repo.initializedObjects[1]
+        private val initAdSupply = repo.initializedObjects.last()
     }
 }
