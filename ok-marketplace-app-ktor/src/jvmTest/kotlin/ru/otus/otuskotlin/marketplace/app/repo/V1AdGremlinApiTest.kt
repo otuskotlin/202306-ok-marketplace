@@ -1,4 +1,4 @@
-package ru.otus.otuskotlin.marketplace.repo
+package ru.otus.otuskotlin.marketplace.app.repo
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -8,43 +8,29 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.testing.*
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Test
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.images.RemoteDockerImage
+import org.testcontainers.utility.DockerImageName
 import ru.otus.otuskotlin.marketplace.api.v1.models.*
 import ru.otus.otuskotlin.marketplace.app.MkplAppSettings
 import ru.otus.otuskotlin.marketplace.app.moduleJvm
+import ru.otus.otuskotlin.marketplace.backend.repository.gremlin.AdRepoGremlin
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
-import ru.otus.otuskotlin.marketplace.common.models.MkplAdId
-import ru.otus.otuskotlin.marketplace.common.models.MkplAdLock
-import ru.otus.otuskotlin.marketplace.common.models.MkplDealSide
-import ru.otus.otuskotlin.marketplace.common.models.MkplVisibility
-import ru.otus.otuskotlin.marketplace.repo.inmemory.AdRepoInMemory
+import ru.otus.otuskotlin.marketplace.common.models.*
 import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
+import java.time.Duration
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-class V1AdInmemoryApiTest {
-    private val uuidOld = "10000000-0000-0000-0000-000000000001"
-    private val uuidNew = "10000000-0000-0000-0000-000000000002"
-    private val uuidSup = "10000000-0000-0000-0000-000000000003"
-    private val initAd = MkplAdStub.prepareResult {
-        id = MkplAdId(uuidOld)
-        title = "abc"
-        description = "abc"
-        adType = MkplDealSide.DEMAND
-        visibility = MkplVisibility.VISIBLE_PUBLIC
-        lock = MkplAdLock(uuidOld)
-    }
-    private val initAdSupply = MkplAdStub.prepareResult {
-        id = MkplAdId(uuidSup)
-        title = "abc"
-        description = "abc"
-        adType = MkplDealSide.SUPPLY
-        visibility = MkplVisibility.VISIBLE_PUBLIC
-    }
+class V1AdGremlinApiTest {
 
     @Test
     fun create() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(test = "create", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -70,16 +56,16 @@ class V1AdInmemoryApiTest {
         }
         val responseObj = response.body<AdCreateResponse>()
         assertEquals(200, response.status.value)
-        assertEquals(uuidNew, responseObj.ad?.id)
         assertEquals(createAd.title, responseObj.ad?.title)
         assertEquals(createAd.description, responseObj.ad?.description)
         assertEquals(createAd.adType, responseObj.ad?.adType)
         assertEquals(createAd.visibility, responseObj.ad?.visibility)
+        assertEquals(uuidNew, responseObj.ad?.lock)
     }
 
     @Test
     fun read() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(test = "read", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -103,7 +89,7 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun update() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(test = "update", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -140,7 +126,7 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun delete() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(test = "delete", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -151,7 +137,7 @@ class V1AdInmemoryApiTest {
                 requestId = "12345",
                 ad = AdDeleteObject(
                     id = uuidOld,
-                    lock = initAd.lock.asString()
+                    lock = initAd.lock.asString(),
                 ),
                 debug = AdDebug(
                     mode = AdRequestDebugMode.TEST,
@@ -167,7 +153,7 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun search() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(test = "search", initObjects = listOf(initAd), randomUuid = { uuidNew })
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -192,7 +178,10 @@ class V1AdInmemoryApiTest {
 
     @Test
     fun offers() = testApplication {
-        val repo = AdRepoInMemory(initObjects = listOf(initAd, initAdSupply), randomUuid = { uuidNew })
+//        val repo = repoUnderTestContainer(
+//            test = "offers",
+//            initObjects = listOf(initAd, initAdSupply),
+//            randomUuid = )
         application {
             moduleJvm(MkplAppSettings(corSettings = MkplCorSettings(repoTest = repo)))
         }
@@ -228,4 +217,69 @@ class V1AdInmemoryApiTest {
         }
     }
 
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun tearUp() {
+            start()
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun tearDown() {
+            stop()
+        }
+
+        private const val USER = "root"
+        private const val PASS = "marketplace-pass"
+
+        private val container by lazy {
+            GenericContainer(RemoteDockerImage(DockerImageName.parse("arcadedata/arcadedb:23.10.1"))).apply {
+                withExposedPorts(2480, 2424, 8182)
+                withEnv(
+                    "JAVA_OPTS",
+                    "-Darcadedb.server.rootPassword=$PASS " +
+                            "-Darcadedb.server.plugins=GremlinServer:com.arcadedb.server.gremlin.GremlinServerPlugin"
+                )
+                waitingFor(Wait.forLogMessage(".*ArcadeDB Server started.*\\n", 1))
+                withStartupTimeout(Duration.ofMinutes(5))
+                start()
+            }
+        }
+
+        private fun start() {
+        }
+
+        private fun stop() {
+            container.stop()
+        }
+
+        private val uuidOld = "10000000-0000-0000-0000-000000000001"
+        private val uuidNew = "10000000-0000-0000-0000-000000000002"
+        private val uuidSup = "10000000-0000-0000-0000-000000000003"
+        private val initAd = MkplAdStub.prepareResult {
+            id = MkplAdId(uuidOld)
+            title = "abc"
+            description = "abc"
+            adType = MkplDealSide.DEMAND
+            visibility = MkplVisibility.VISIBLE_PUBLIC
+            lock = MkplAdLock(uuidOld)
+        }
+        private val initAdSupply = MkplAdStub.prepareResult {
+            id = MkplAdId(uuidSup)
+            title = "abc"
+            description = "abc"
+            adType = MkplDealSide.SUPPLY
+            visibility = MkplVisibility.VISIBLE_PUBLIC
+        }
+
+        private val repo = AdRepoGremlin(
+            hosts = container.host,
+            user = USER,
+            pass = PASS,
+            port = container.getMappedPort(8182),
+            initObjects = listOf(initAd, initAdSupply),
+            randomUuid = { uuidNew }
+        )
+    }
 }

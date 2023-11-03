@@ -33,7 +33,7 @@ class AdRepoGremlin(
     private val enableSsl: Boolean = false,
     private val user: String = "root",
     private val pass: String = "",
-    initObjects: List<MkplAd> = emptyList(),
+    initObjects: Collection<MkplAd> = emptyList(),
     initRepo: ((GraphTraversalSource) -> Unit)? = null,
     val randomUuid: () -> String = { uuid4().toString() },
 ) : IAdRepository {
