@@ -6,7 +6,6 @@ import ru.otus.otuskotlin.marketplace.backend.repository.inmemory.AdRepoStub
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 
-
 fun Application.initAppSettings(): MkplAppSettings {
     val corSettings = MkplCorSettings(
         loggerProvider = getLoggerProviderConf(),
