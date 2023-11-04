@@ -217,13 +217,12 @@ class V1AdGremlinApiTest {
         @BeforeClass
         @JvmStatic
         fun tearUp() {
-            start()
         }
 
         @AfterClass
         @JvmStatic
         fun tearDown() {
-            stop()
+            container.stop()
         }
 
         private const val USER = "root"
@@ -241,13 +240,6 @@ class V1AdGremlinApiTest {
                 withStartupTimeout(Duration.ofMinutes(5))
                 start()
             }
-        }
-
-        private fun start() {
-        }
-
-        private fun stop() {
-            container.stop()
         }
 
         private val uuidOld = "10000000-0000-0000-0000-000000000001"

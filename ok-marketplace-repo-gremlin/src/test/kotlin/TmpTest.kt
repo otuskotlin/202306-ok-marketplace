@@ -7,6 +7,7 @@ import org.apache.tinkerpop.gremlin.driver.Cluster
 import org.apache.tinkerpop.gremlin.driver.remote.DriverRemoteConnection
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource.traversal
 import org.apache.tinkerpop.gremlin.structure.Vertex
+import org.apache.tinkerpop.gremlin.structure.VertexProperty
 import org.junit.Ignore
 import org.junit.Test
 import ru.otus.otuskotlin.marketplace.common.models.MkplAd
@@ -46,7 +47,7 @@ class TmpTest {
             .use { g ->
                 val userId = g
                     .addV("User")
-                    .property("name", "Evan")
+                    .property(VertexProperty.Cardinality.single, "name", "Evan")
                     .next()
                     .id()
                 println("UserID: $userId")
@@ -61,8 +62,7 @@ class TmpTest {
         val cluster = Cluster.build().apply {
             addContactPoints(host)
             port(port)
-//            credentials("root", "root@root")
-            credentials("gremlin", "gremlin%gremlin")
+            credentials("root", "root_root")
 //            path("/mkpl")
 //            enableSsl(enableSsl)
         }.create()
@@ -89,8 +89,7 @@ class TmpTest {
         val cluster = Cluster.build().apply {
             addContactPoints(host)
             port(port)
-//            credentials("root", "root@root")
-            credentials("gremlin", "gremlin%gremlin")
+//            credentials("root", "root_root")
 //            path("/mkpl")
 //            enableSsl(enableSsl)
         }.create()
