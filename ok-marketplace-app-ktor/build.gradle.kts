@@ -148,6 +148,7 @@ kotlin {
 
                 implementation(project(":ok-marketplace-repo-postgresql"))
                 implementation(project(":ok-marketplace-repo-cassandra"))
+                implementation(project(":ok-marketplace-repo-gremlin"))
             }
         }
 
