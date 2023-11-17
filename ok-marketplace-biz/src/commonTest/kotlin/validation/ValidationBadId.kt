@@ -1,15 +1,17 @@
 package ru.otus.otuskotlin.marketplace.biz.validation
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
+import ru.otus.otuskotlin.marketplace.biz.addTestPrincipal
 import ru.otus.otuskotlin.marketplace.common.MkplContext
 import ru.otus.otuskotlin.marketplace.common.models.*
+import ru.otus.otuskotlin.marketplace.stubs.MkplAdStub
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
-@OptIn(ExperimentalCoroutinesApi::class)
+private val stub = MkplAdStub.prepareResult { id = MkplAdId("123-234-abc-ABC") }
+
 fun validationIdCorrect(command: MkplCommand, processor: MkplAdProcessor) = runTest {
     val ctx = MkplContext(
         command = command,
@@ -24,12 +26,12 @@ fun validationIdCorrect(command: MkplCommand, processor: MkplAdProcessor) = runT
             lock = MkplAdLock("123-234-abc-ABC"),
         ),
     )
+    ctx.addTestPrincipal(stub.ownerId)
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
     assertNotEquals(MkplState.FAILING, ctx.state)
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 fun validationIdTrim(command: MkplCommand, processor: MkplAdProcessor) = runTest {
     val ctx = MkplContext(
         command = command,
@@ -44,12 +46,12 @@ fun validationIdTrim(command: MkplCommand, processor: MkplAdProcessor) = runTest
             lock = MkplAdLock("123-234-abc-ABC"),
         ),
     )
+    ctx.addTestPrincipal(stub.ownerId)
     processor.exec(ctx)
     assertEquals(0, ctx.errors.size)
     assertNotEquals(MkplState.FAILING, ctx.state)
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 fun validationIdEmpty(command: MkplCommand, processor: MkplAdProcessor) = runTest {
     val ctx = MkplContext(
         command = command,
@@ -72,7 +74,6 @@ fun validationIdEmpty(command: MkplCommand, processor: MkplAdProcessor) = runTes
     assertContains(error?.message ?: "", "id")
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 fun validationIdFormat(command: MkplCommand, processor: MkplAdProcessor) = runTest {
     val ctx = MkplContext(
         command = command,

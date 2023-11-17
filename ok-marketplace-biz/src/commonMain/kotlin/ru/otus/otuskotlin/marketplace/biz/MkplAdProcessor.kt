@@ -1,11 +1,14 @@
 package ru.otus.otuskotlin.marketplace.biz
 
 import ru.otus.otuskotlin.marketplace.biz.general.initRepo
+import ru.otus.otuskotlin.marketplace.biz.general.operation
 import ru.otus.otuskotlin.marketplace.biz.general.prepareResult
-import ru.otus.otuskotlin.marketplace.biz.groups.operation
-import ru.otus.otuskotlin.marketplace.biz.groups.stubs
+import ru.otus.otuskotlin.marketplace.biz.general.stubs
+import ru.otus.otuskotlin.marketplace.biz.permissions.accessValidation
+import ru.otus.otuskotlin.marketplace.biz.permissions.chainPermissions
+import ru.otus.otuskotlin.marketplace.biz.permissions.frontPermissions
+import ru.otus.otuskotlin.marketplace.biz.permissions.searchTypes
 import ru.otus.otuskotlin.marketplace.biz.repo.*
-import ru.otus.otuskotlin.marketplace.biz.statemachine.computeAdState
 import ru.otus.otuskotlin.marketplace.biz.validation.*
 import ru.otus.otuskotlin.marketplace.biz.workers.*
 import ru.otus.otuskotlin.marketplace.common.MkplContext
@@ -14,21 +17,17 @@ import ru.otus.otuskotlin.marketplace.common.models.MkplAdId
 import ru.otus.otuskotlin.marketplace.common.models.MkplAdLock
 import ru.otus.otuskotlin.marketplace.common.models.MkplCommand
 import ru.otus.otuskotlin.marketplace.common.models.MkplState
+import ru.otus.otuskotlin.marketplace.cor.chain
 import ru.otus.otuskotlin.marketplace.cor.rootChain
 import ru.otus.otuskotlin.marketplace.cor.worker
-import ru.otus.otuskotlin.marketplace.cor.chain
 
-class MkplAdProcessor(
-    @Suppress("unused")
-    private val corSettings: MkplCorSettings = MkplCorSettings.NONE
-) {
-    suspend fun exec(ctx: MkplContext) = BusinessChain.exec(ctx.apply { settings = corSettings })
+class MkplAdProcessor(val settings: MkplCorSettings = MkplCorSettings()) {
+    suspend fun exec(ctx: MkplContext) = BusinessChain.exec(ctx.apply { this.settings = this@MkplAdProcessor.settings })
 
     companion object {
         private val BusinessChain = rootChain<MkplContext> {
             initStatus("Инициализация статуса")
             initRepo("Инициализация репозитория")
-
             operation("Создание объявления", MkplCommand.CREATE) {
                 stubs("Обработка стабов") {
                     stubCreateSuccess("Имитация успешной обработки")
@@ -49,11 +48,14 @@ class MkplAdProcessor(
 
                     finishAdValidation("Завершение проверок")
                 }
+                chainPermissions("Вычисление разрешений для пользователя")
                 chain {
                     title = "Логика сохранения"
                     repoPrepareCreate("Подготовка объекта для сохранения")
+                    accessValidation("Вычисление прав доступа")
                     repoCreate("Создание объявления в БД")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
             operation("Получить объявление", MkplCommand.READ) {
@@ -71,16 +73,18 @@ class MkplAdProcessor(
 
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
-                computeAdState("Вычисление состояния объявления")
+                chainPermissions("Вычисление разрешений для пользователя")
                 chain {
                     title = "Логика чтения"
                     repoRead("Чтение объявления из БД")
+                    accessValidation("Вычисление прав доступа")
                     worker {
                         title = "Подготовка ответа для Read"
                         on { state == MkplState.RUNNING }
                         handle { adRepoDone = adRepoRead }
                     }
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
             operation("Изменить объявление", MkplCommand.UPDATE) {
@@ -109,12 +113,15 @@ class MkplAdProcessor(
 
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
+                chainPermissions("Вычисление разрешений для пользователя")
                 chain {
                     title = "Логика сохранения"
                     repoRead("Чтение объявления из БД")
+                    accessValidation("Вычисление прав доступа")
                     repoPrepareUpdate("Подготовка объекта для обновления")
                     repoUpdate("Обновление объявления в БД")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
             operation("Удалить объявление", MkplCommand.DELETE) {
@@ -135,12 +142,15 @@ class MkplAdProcessor(
                     validateLockProperFormat("Проверка формата lock")
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
+                chainPermissions("Вычисление разрешений для пользователя")
                 chain {
                     title = "Логика удаления"
                     repoRead("Чтение объявления из БД")
+                    accessValidation("Вычисление прав доступа")
                     repoPrepareDelete("Подготовка объекта для удаления")
                     repoDelete("Удаление объявления из БД")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
             operation("Поиск объявлений", MkplCommand.SEARCH) {
@@ -155,7 +165,11 @@ class MkplAdProcessor(
 
                     finishAdFilterValidation("Успешное завершение процедуры валидации")
                 }
+                chainPermissions("Вычисление разрешений для пользователя")
+                searchTypes("Подготовка поискового запроса")
+
                 repoSearch("Поиск объявления в БД по фильтру")
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
             operation("Поиск подходящих предложений для объявления", MkplCommand.OFFERS) {
@@ -173,12 +187,15 @@ class MkplAdProcessor(
 
                     finishAdValidation("Успешное завершение процедуры валидации")
                 }
+                chainPermissions("Вычисление разрешений для пользователя")
                 chain {
                     title = "Логика поиска в БД"
                     repoRead("Чтение объявления из БД")
+                    accessValidation("Вычисление прав доступа")
                     repoPrepareOffers("Подготовка данных для поиска предложений")
                     repoOffers("Поиск предложений для объявления в БД")
                 }
+                frontPermissions("Вычисление пользовательских разрешений для фронтенда")
                 prepareResult("Подготовка ответа")
             }
         }.build()

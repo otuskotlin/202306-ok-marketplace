@@ -1,13 +1,11 @@
 package ru.otus.otuskotlin.marketplace.biz.validation
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import ru.otus.otuskotlin.marketplace.backend.repository.inmemory.AdRepoStub
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.common.models.MkplCommand
 import kotlin.test.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class BizValidationUpdateTest {
 
     private val command = MkplCommand.UPDATE
@@ -35,4 +33,3 @@ class BizValidationUpdateTest {
 
 
 }
-
