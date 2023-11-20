@@ -53,6 +53,9 @@ dependencies {
     implementation(project(":ok-marketplace-repo-stubs"))
     testImplementation(project(":ok-marketplace-repo-tests"))
 
+    // auth
+    implementation(project(":ok-marketplace-auth"))
+
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux") // Controller, Service, etc..
     testImplementation("com.ninja-squad:springmockk:3.0.1") // mockking beans
