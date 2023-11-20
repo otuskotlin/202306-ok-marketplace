@@ -17,5 +17,7 @@ fun Application.initAppSettings(): MkplAppSettings {
         appUrls = environment.config.propertyOrNull("ktor.urls")?.getList() ?: emptyList(),
         corSettings = corSettings,
         processor = MkplAdProcessor(corSettings),
+        logger = getLoggerProviderConf(),
+        auth = initAppAuth(),
     )
 }

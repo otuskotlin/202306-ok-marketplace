@@ -4,6 +4,7 @@ import kotlinx.coroutines.test.runTest
 import ru.otus.otuskotlin.marketplace.api.v2.models.*
 import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
+import ru.otus.otuskotlin.marketplace.logging.common.MpLoggerProvider
 import ru.otus.otuskotlin.marketplace.mappers.v2.fromTransport
 import ru.otus.otuskotlin.marketplace.mappers.v2.toTransportAd
 import kotlin.test.Test
@@ -26,6 +27,8 @@ class ControllerV2Test {
 
     private val appSettings: IMkplAppSettings = object : IMkplAppSettings {
         override val corSettings: MkplCorSettings = MkplCorSettings()
+        override val logger: MpLoggerProvider = MpLoggerProvider()
+        override val auth: AuthConfig = AuthConfig.NONE
         override val processor: MkplAdProcessor = MkplAdProcessor(corSettings)
     }
 

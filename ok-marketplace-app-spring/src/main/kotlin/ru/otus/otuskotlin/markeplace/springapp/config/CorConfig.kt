@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import ru.otus.otuskotlin.markeplace.springapp.models.MkplAppSettings
+import ru.otus.otuskotlin.marketplace.app.common.AuthConfig
 import ru.otus.otuskotlin.marketplace.backend.repo.sql.RepoAdSQL
 import ru.otus.otuskotlin.marketplace.backend.repo.sql.SqlProperties
 import ru.otus.otuskotlin.marketplace.backend.repository.inmemory.AdRepoStub
@@ -21,15 +22,19 @@ import ru.otus.otuskotlin.marketplace.repo.inmemory.AdRepoInMemory
 class CorConfig {
     @Bean
     fun loggerProvider(): MpLoggerProvider = MpLoggerProvider { mpLoggerLogback(it) }
+    @Bean
+    fun appAuth(): AuthConfig = AuthConfig.NONE
 
     @Bean
-    fun prodRepository(props: SqlPropertiesEx) = RepoAdSQL(SqlProperties(
-        url = props.url,
-        user = props.user,
-        password = props.password,
-        schema = props.schema,
-        table = props.table ?: "ad",
-    ))
+    fun prodRepository(props: SqlPropertiesEx) = RepoAdSQL(
+        SqlProperties(
+            url = props.url,
+            user = props.user,
+            password = props.password,
+            schema = props.schema,
+            table = props.table ?: "ad",
+        )
+    )
 
     @Bean
     fun testRepository() = AdRepoInMemory()
@@ -50,12 +55,19 @@ class CorConfig {
     )
 
     @Bean
-    fun appSettings(corSettings: MkplCorSettings, processor: MkplAdProcessor) = MkplAppSettings(
+    fun appSettings(
+        corSettings: MkplCorSettings,
+        processor: MkplAdProcessor,
+        logger: MpLoggerProvider,
+        auth: AuthConfig,
+    ) = MkplAppSettings(
         corSettings = corSettings,
         processor = processor,
+        logger = logger,
+        auth = auth,
     )
 
     @Bean
-    fun mkplAdProcessor(corSettings: MkplCorSettings) = MkplAdProcessor(corSettings = corSettings)
+    fun mkplAdProcessor(corSettings: MkplCorSettings) = MkplAdProcessor(settings = corSettings)
 
 }

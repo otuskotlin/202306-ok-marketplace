@@ -1,14 +1,12 @@
 package ru.otus.otuskotlin.marketplace.biz.validation
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.backend.repository.inmemory.AdRepoStub
+import ru.otus.otuskotlin.marketplace.biz.MkplAdProcessor
 import ru.otus.otuskotlin.marketplace.common.MkplCorSettings
 import ru.otus.otuskotlin.marketplace.common.models.MkplCommand
 import kotlin.test.Test
 
 // TODO-validation-5: смотрим пример теста валидации, собранного из тестовых функций-оберток
-@OptIn(ExperimentalCoroutinesApi::class)
 class BizValidationCreateTest {
 
     private val command = MkplCommand.CREATE
@@ -30,4 +28,3 @@ class BizValidationCreateTest {
     @Test fun badSymbolsDescription() = validationDescriptionSymbols(command, processor)
 
 }
-
